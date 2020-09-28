@@ -1,0 +1,17 @@
+关于@Entity()中可扩充的参数
+name配置映射到数据库表名,如果不指定会以实体类名字创建数据表
+orderBy排序方式(一般不用)
+engine引擎(一般不用)
+database数据库(一般不用,除非多个数据库的时候)
+
+不管是使用@PrimaryGeneratedColumn()、@Column()等装饰器装饰字段的我们都叫字段装饰器
+type配置字段类型,在mysql中字符类型可能是char、varchar、text,数字类型可能是int、tinyint,小数类型可能是float、double、decimal(10,2)等
+name真正映射到mysql数据库中字段名字,如果不指定会默认以对象的字段为名字(建议都指定)
+length长度,比如在mysql中字段为varchar的时候指定字段长度
+nullable在mysql中字段是否可以为NULL值,默认为false
+select改字段是否可以被查询出来(针对使用typeORM的查寻操作,不针对你使用原生SQL语句操作),默认为true表示可以被查询出来
+default默认值,比如插入数据的时候,没传递该字段的值,就默认一个值
+unique是否唯一约束
+comment备注该字段是做什么的(建议都写上,方便阅读)
+enum枚举类型
+array该列是否以数组
