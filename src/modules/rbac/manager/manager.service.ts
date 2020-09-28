@@ -7,10 +7,12 @@ export class ArticleService {
     findAll(){
         console.log(this.configService.get("JwtConfig.secret"))
         return [
-            
+            {id:1}
         ]
     }
-    findAllUser(){}
+    findAllUser(){
+
+    }
     createUser(){}
     modifyStatusUser(){}
     delUser(){ }
