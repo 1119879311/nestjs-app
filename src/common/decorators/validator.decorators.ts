@@ -1,31 +1,4 @@
-// import { registerDecorator, ValidationOptions, ValidationArguments, Validator } from 'class-validator';
-// import { get } from 'lodash';
-
-// const validator = new Validator();
-
-// export function IsEqualsThan(property: string[] | string, validationOptions?: ValidationOptions) {
-//     return (object: object, propertyName: string) => {
-//         registerDecorator({
-//             name: 'IsEqualsThan',
-//             target: object.constructor,
-//             propertyName,
-//             constraints: [property],
-//             options: validationOptions,
-//             validator: {
-//                 validate(value: any, args: ValidationArguments): boolean {
-//                     // 拿到要比较的属性名或者路径 参考`lodash#get`方法
-//                     const [comparativePropertyName] = args.constraints;
-//                     // 拿到要比较的属性值
-//                     const comparativeValue = get(args.object, comparativePropertyName);
-//                     // 返回false 验证失败
-//                     // return validator.equals(value, comparativeValue);
-//                 },
-//             },
-//         });
-//     };
-// }
-
-import { registerDecorator, ValidationArguments, ValidationOptions, Validator } from "class-validator"
+import { registerDecorator, ValidationArguments, ValidationOptions } from "class-validator"
 import {get} from "lodash"
 // const validatorO = new Validator();
 export function IsEqualsThan(property:string|string[],validationOptions?:ValidationOptions){
@@ -47,6 +20,25 @@ export function IsEqualsThan(property:string|string[],validationOptions?:Validat
             //    console.log('comparativeValue:',relatedValue)
                // 返回false 验证失败
                return value===relatedValue
+            },
+          },
+        });     
+      };
+}
+
+
+export function  IsRegExp(regExpOptions:{pattern:RegExp|string,flags?:string},validationOptions?:ValidationOptions){
+    return function (object: Object, propertyName: string) {
+        registerDecorator({
+          name: 'IsRegExp',
+          target: object.constructor,
+          propertyName: propertyName,
+          constraints: [regExpOptions.pattern],
+          options: validationOptions,
+          validator: {
+            validate(value: any, args: ValidationArguments) {
+                let reg = new RegExp(regExpOptions.pattern,regExpOptions.flags)
+                return reg.test(value);
             },
           },
         });     

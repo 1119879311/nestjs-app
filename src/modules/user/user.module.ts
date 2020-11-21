@@ -1,3 +1,5 @@
+import { tk_authority } from './../../entity/tk_authority.entity';
+import { tk_role } from './../../entity/tk_role.entity';
 import { UserLoginService } from './userLogin.service';
 import { UserCenterController } from './userCenter.controller';
 import { UserLoginController } from './userLogin.controller';
@@ -10,9 +12,10 @@ import { UserCenterService } from './userCenter.service';
 @Module({
     imports:[
         forwardRef(()=>AuthModule),
-        TypeOrmModule.forFeature([tk_user])
+        TypeOrmModule.forFeature([tk_user,tk_role,tk_authority])
     ],
     controllers:[UserLoginController,UserCenterController],
-    providers:[UserLoginService,UserCenterService]
+    providers:[UserLoginService,UserCenterService],
+    exports:[UserCenterService]
 })
 export class UserModule{};

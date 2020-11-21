@@ -10,10 +10,10 @@ export class HttpExceptionFilter implements ExceptionFilter{
         const res = ctx.getResponse<Response>()
         // 异常状态码：
         let status = exception instanceof HttpException?exception.getStatus():HttpStatus.INTERNAL_SERVER_ERROR
-        //错误信息：
         
+        //错误信息：
         let errResBody =typeof exception.getResponse==='function'?exception.getResponse():exception;// string|object ts无法知道object的成员
-        const message = typeof errResBody==='object'?errResBody:{message:errResBody}
+        const message = typeof errResBody==='object'?{message:(errResBody as any).message}:{message:errResBody}
             ||{message:exception.message} || {message:'服务器异常'};
             
         let resBody = {
@@ -28,7 +28,7 @@ export class HttpExceptionFilter implements ExceptionFilter{
             reqPath: req.url, // 错误路由
         }
         Logger.error("错误信息",JSON.stringify(logBody),'HttpExceptionFilter')
-        res.status(status).json(resBody)
+        res.status(200).json(resBody)
     }
     
 }

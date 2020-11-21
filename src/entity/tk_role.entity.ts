@@ -1,5 +1,7 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { tk_user_role } from './tk_user_role.entity';
+import { tk_authority } from './tk_authority.entity';
+import { tk_user } from 'src/entity/tk_user.entity';
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+// import { tk_user_role } from './tk_user_role.entity';
 /**
  * 角色实体
  */
@@ -12,15 +14,15 @@ export class tk_role{
     name:string
 
     @Column({comment:'角色描述',nullable:true})  // 唯一
-    title:string
+    desc:string
 
-    @Column({comment:'角色类型',default:1,nullable:false})  // 唯一
+    @Column({comment:'角色类型',default:1,nullable:false})  //
     role_type:number
     
     @Column({comment:'角色的父级id (所属)',nullable:true})  // 唯一
     pid:number
 
-    @Column({type:'int',default:1,unique:false,comment:'用户状态：1是启用，其他是禁用'})
+    @Column({type:'int',unique:false,comment:'用户状态：1是启用，其他是禁用'})
     status:number
 
     @Column({type:'int',default:10,unique:false,comment:'排序'})
@@ -30,8 +32,18 @@ export class tk_role{
     createtime:string
 
     @UpdateDateColumn({ comment: '更新时间' })   //自动生成并自动更新列
-    updatatime: string
+    updatetime: string
 
-    @OneToMany(type => tk_user_role, userRole => userRole.users)
-    userRoles: tk_user_role[];
+    // @OneToMany(type => tk_user_role, userRole => userRole.users)
+    // roleUsers: tk_user_role[];
+    @ManyToMany(type => tk_user, user => user.roles)
+    users: tk_user[];
+
+    @ManyToMany(type => tk_authority, auth => auth.roles)
+    @JoinTable({
+        name: 'tk_role_authority',
+        joinColumns: [  {name: 'r_id'} ],
+        inverseJoinColumns: [ {name: 'a_id'}]
+    })
+    auths: tk_authority[]
 }

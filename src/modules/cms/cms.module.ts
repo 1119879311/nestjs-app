@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ArticleModule } from './article/article.module';
-import { CateModule } from './cate/cate.module';
+import { TagModule } from './tag/tag.module';
+import { ClassifyModule } from './classify/classify.module';
+import { ImagesModule } from './images/images.module';
+
 @Module({
-  imports: [ArticleModule, CateModule],
+  imports: [ArticleModule, TagModule, ClassifyModule, ImagesModule],
   controllers: [],
   providers: [],
 })

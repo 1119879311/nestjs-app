@@ -1,9 +1,9 @@
 import { modifypwdDto } from './dto/modifypwd.dto';
-import { Body, Controller, Get, Post, Req, Res } from "@nestjs/common";
-import { Response } from "express";
+import { Body, Controller,  Post, Query, Req } from "@nestjs/common";
+
 import { UserCenterService } from './userCenter.service';
 
-@Controller()
+@Controller('managerCenter')
 export class UserCenterController{
     constructor(
         private userCenterService:UserCenterService
@@ -14,8 +14,7 @@ export class UserCenterController{
     
     @Post("getManagerRole")
     getManagerRole(@Req() req){
-        console.log(req['user'])
-        return req['user']
+        return this.userCenterService.getManagerRole(req['user'].id)
     }
 
     /**
@@ -26,5 +25,7 @@ export class UserCenterController{
         let {id} = req['user']
         return await this.userCenterService.modifypwd({id,password:data.password})
     }
+
+    
 
 }

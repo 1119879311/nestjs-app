@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './../auth/auth.service';
-import { BadRequestException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import * as svgCaptcha from "svg-captcha"
 import { Aes, TimeTranform } from 'src/common/util';
 import { userLoginDto } from './dto/userLogin.dto';
@@ -23,12 +23,18 @@ export class UserLoginService{
             throw new BadRequestException('图形认证码失败')
         }
         //验证密码
-        let userInfo =  await this.tkUserRepository.findOne({ name:data.username })
+        // let userInfo =  await this.tkUserRepository.findOne({where:{name:data.username} })
+        let userInfo = await this.tkUserRepository.createQueryBuilder('u').where('u.name=:username',{username:data.username}).addSelect('u.password').getOne();
         // 账号不存在
         if(!userInfo) throw new HttpException('账号不存在', HttpStatus.BAD_REQUEST)
 
         // 密码错误
+        
         let aesPassword = Aes.decrypt(userInfo.password,this.configService.get('password_secret'))
+        console.log("userInfo",userInfo)
+        console.log("aesPassword",aesPassword)
+        console.log("data.password",data.password)
+        
         if(!aesPassword||aesPassword!=data.password){
             throw new HttpException('密码错误', HttpStatus.BAD_REQUEST)
         }
@@ -63,7 +69,7 @@ export class UserLoginService{
         console.log("expiresIn---:"+this.configService.get("code_expiresIn"),expiresIn)
         let data = {codeText:codeText,time:new Date().getTime(),expiresIn:expiresIn};
         let codeToken = Aes.encryption(JSON.stringify(data),codeText.toLowerCase())
-        return {codeSvg:captcha.data,codeToke:codeToken}
+        return {codeSvg:captcha.data,codeToken:codeToken}
        
     }
     /**验证码校验，不区分大小写
@@ -80,5 +86,26 @@ export class UserLoginService{
             return false
         }
         return true
+    }
+
+
+    jiajiemi(data = {value:'',time:'',type:''}){
+        let {value='',time='',type=''} = data
+        if(!value||!this.veryfyTime(time)||!type){
+            throw new NotFoundException("NoFound")
+        }
+        if(type==='jiemi'){
+            return  Aes.decrypt(value,"password_secret")
+        }else if(type==='jiami'){
+            return Aes.encryption(value,this.configService.get('password_secret'))
+        }
+        throw new NotFoundException("签名fail") 
+       
+    }
+   
+    veryfyTime(time:string){
+        let nowData= new Date()
+        let nowTime = nowData.getFullYear()+'-'+(nowData.getMonth()+1)+'-'+nowData.getDate()
+        return nowTime===time;
     }
 }

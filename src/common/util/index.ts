@@ -3,6 +3,17 @@
 import * as crypto from "crypto";
 const AES_SECRET_KEY='AES_SECRET_KEY';
 
+export function signRonder(n = 30){ //取随机数
+    var str = "123456789aAbBcCdDeEfFgGhHiIjJkKlLmMoOpPqQurRsStTuUvVwWxXyYzZ_-";
+    if ( n < 3) n = 30;
+    var ronderstr = "";
+    for (var i = 0; i < n; i++) {
+        var index = Math.floor(Math.random() * str.length);
+        ronderstr += str[index];
+    }
+    return ronderstr
+}
+
 export const MD5 =(data:string)=>{
     let dataKey = data.split('').reverse().join('');
     let hash = crypto.createHash("sha256")
@@ -117,4 +128,104 @@ function getCountDays() {
   /* 返回当月的天数 */
   return curDate.getDate();
 }
+
+//递归法：一维数组转无限极树状结构
+/**
+ *
+ * @param data 数据源，一维数据
+ * @param idKeys 要匹配所在项的唯一idkey 属性字段，比如idkeys ='id',
+ * @param pidKeys 要匹配所在项的上级 pidkey 属性字段，比如pidkeys = 'pid',
+ * @param pid  要匹配所在项目的上级pidkey 字段的值,比如 pid = 0
+ * @param leve 当前所在树状结构的层级数
+ */
+export function oneToTree<T extends {[key:string]:any}>(data:T[],idKeys?:string,pidKeys?:string,pid?:any,leve?:number){
+    let idKey = idKeys||"id"
+    let pidKey = pidKeys||'pid'
+    let leveKey = "$leve"
+    let childrenKey = "children"
+    let pidData = pid||0
+    let leves = leve||1;
+    if(!Array.isArray(data)) return data;
+    type resI = T&{$leve:number,children:resI[]};//使用交叉类型，新增了两个字段$live,children
+    let resArr:Array<resI> =[];
+    data.forEach( (itme:any)=> {
+        if (itme[pidKey] === pidData) {
+            itme[leveKey] = leves;
+            itme[childrenKey] = oneToTree(data, idKey, pidKey, itme[idKey], leves + 1);
+            resArr.push(itme)
+        }
+    })
+
+    return resArr
+
+}
+
+export function filterObject<T extends {[key:string]:any}>(data:T,keys?:(keyof T)[]|keyof T){
+    let res:any = {};
+    for (const key in data) {
+        let val = data[key]
+        if((val!==''&&val!==null&&val!==undefined)||key===keys){
+            res[key] =data[key] 
+        }
+    }
+    return res
+}
+export function isToEmpty(val:any){
+    return (val!==''&&val!==null&&val!==undefined)
+}
+
+export  let dataFormat=  (date:number|Date, format ="yyyy-MM-dd hh:mm:ss"):string =>{//参数一:时间，参数，要显示的时间格式
+    if(!date) return '';
+    date = new Date(date);
+    if (Object.prototype.toString.call(date) !== "[object Date]") return '';
+    var o = {
+        "M+": date.getMonth() + 1,                 //月份 
+        "d+": date.getDate(),                    //日 
+        "h+": date.getHours(),                   //小时 
+        "m+": date.getMinutes(),                 //分 
+        "s+": date.getSeconds(),                 //秒 
+        "q+": Math.floor((date.getMonth() + 3) / 3), //季度 
+        "S": date.getMilliseconds()             //毫秒 
+    };
+    if (/(y+)/.test(format)) {
+        format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+    }
+    for (var k in o) {
+        if (new RegExp("(" + k + ")").test(format)) {
+
+            format = format.replace(RegExp.$1, (RegExp.$1.length === 1) ? ((o as any )[k]) : (("00" + (o as any)[k]).substr(("" + (o as any)[k]).length)));
+        }
+    }
+    return format;
+}
+
+/**
+ * 
+ * @param mimetype 文件分类
+ */
+export function getFileType(mimetype){
+
+    if(/^image\/.*/.test(mimetype)){
+        return "images"
+    }
+    if(/^video\/.*/.test(mimetype)){
+        return "videos"
+    }
+    if(/^audio\/.*/.test(mimetype)){
+        return "audios"
+    }
+    return "files"
+
+    // let imageReg = /\.(png|jpe?g|gif|svg)$/i
+    // if(imageReg.test(fileName)){
+    //     return "images"
+    // }
+
+    // if(/\.(ogg|mp4|mp3)$/i.test(fileName)){
+    //     return "video"
+    // }
+    // return "files"
+}
+
+
 

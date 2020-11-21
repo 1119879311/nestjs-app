@@ -17,10 +17,10 @@ export class JwtStrategy  extends PassportStrategy(Strategy){
         })
     }
     /**
-     * 重写 validate 方法，验证通过后 payload 的内容题为之前签名的是数据，会在request 请求体加上use 的属性
+     * 重写 validate 方法，验证通过后 payload 的内容题为之前签名的是数据，会在request 请求体加上user 的属性
      * @param payload 
      */
-    async validate<T>(payload:T){
+    async validate<T>(payload:T):Promise<T>{
         let res = await this.authService.validateUser(payload)
         if(!res) new UnauthorizedException();
         return res;

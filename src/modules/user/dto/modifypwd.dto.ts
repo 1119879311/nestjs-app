@@ -1,5 +1,5 @@
 
-import { Equals, IsNotEmpty, IsNumberString, IsOptional, ValidateIf} from "class-validator"
+import {  IsNotEmpty, IsNumberString, IsOptional} from "class-validator"
 import { IsEqualsThan } from "src/common/decorators/validator.decorators"
 
 export class modifypwdDto{

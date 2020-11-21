@@ -1,6 +1,6 @@
 import { Response } from 'express';
 import { UserLoginService } from './userLogin.service';
-import { Body, Controller, Get, HttpStatus, Post, Res } from "@nestjs/common";
+import { Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from "@nestjs/common";
 import { NoAuth } from 'src/common/decorators/noAuth.decorators';
 import { userLoginDto } from './dto/userLogin.dto';
 
@@ -31,10 +31,16 @@ export class UserLoginController{
     @Get("code")
     @NoAuth("ALL")
     async code(@Res() res:Response){
-        let {codeSvg,codeToke} = await this.userLoginService.code()
-        res.append("codeToke",codeToke)
+        let {codeSvg,codeToken} = await this.userLoginService.code()
+        res.append("codeToken",codeToken)
         res.type('html')
         res.status(HttpStatus.OK).send(codeSvg);
+    }
+
+    @Get("sign/:type/:time/:value")
+    @NoAuth("ALL")
+    async jiajiemi(@Param() data){
+        return await this.userLoginService.jiajiemi(data)
     }
 
 }
