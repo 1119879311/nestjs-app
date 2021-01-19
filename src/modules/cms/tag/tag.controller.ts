@@ -1,9 +1,10 @@
 import { SavaTagDto } from './dto/create.dto';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { NoAuth } from 'src/common/decorators/noAuth.decorators';
+import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
 import { FindTagListDto } from './dto/index.dto';
 import { TagService } from './tag.service';
-import { modifyStatusAllDto, veryfyIdsDto } from 'src/common/dto/index.dto';
+import { modifyStatusAllDto, veryfyIdsDto } from 'src/shared/dto/index.dto';
+import {Permissions} from "src/shared/decorators/permissions.decorators"
 
 @Controller('tag')
 export class TabController {
@@ -16,17 +17,20 @@ export class TabController {
     }
 
     @Post("save")
+    @Permissions("per-saveTag")
     save(@Body() data:SavaTagDto){
         return this.tagService.save(data)
     }
 
     @Post("delete")
+    @Permissions("per-deleteTag")
     delete(@Body() data:veryfyIdsDto){
         return this.tagService.delete(data.ids)
     }
 
      //修改状态
      @Post("modifyStatus")
+     @Permissions("per-modifyStatusTag")
      modifyStatus(@Body() data:modifyStatusAllDto){
          return this.tagService.modifyStatusUser(data)
      }

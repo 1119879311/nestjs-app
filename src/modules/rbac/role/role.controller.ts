@@ -1,8 +1,8 @@
-import { modifyStatusDto, veryfyIdDto } from 'src/common/dto/index.dto';
+import { modifyStatusDto, veryfyIdDto } from 'src/shared/dto/index.dto';
 import { RoleService } from './role.service';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { FindRoleListDto, SaveRoleDto, TasksAuthorityDto } from './dto/index.dto';
-import {Permissions} from "src/common/decorators/permissions.decorators"
+import {Permissions} from "src/shared/decorators/permissions.decorators"
 @Controller('role')
 export class RoleController {
     constructor(

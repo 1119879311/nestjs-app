@@ -1,10 +1,12 @@
-import { ArgumentsHost, Catch, ExceptionFilter,HttpException, HttpStatus, Logger } from "@nestjs/common";
+import { AppLogger } from 'src/shared/logger/logger.service';
+import { ArgumentsHost, Catch, ExceptionFilter,HttpException, HttpStatus } from "@nestjs/common";
 import { Request, Response } from 'express';
 // 全局异常过滤器处理
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter{
+    constructor( private readonly appLogger:AppLogger){}
     catch(exception: HttpException, host: ArgumentsHost) {
-        console.log("进入全局异常过滤器")
+        this.appLogger.warn("进入全局异常过滤器",'ExceptionResponse')
         const ctx = host.switchToHttp();
         const req = ctx.getRequest<Request>();
         const res = ctx.getResponse<Response>()
@@ -22,12 +24,17 @@ export class HttpExceptionFilter implements ExceptionFilter{
             data: null, // 错误消息内容体(争取和拦截器中定义的响应体一样)
             status:false
         }
-        let logBody = {
-            ...resBody,
-            timestamp: new Date().toISOString(), // 错误日期
-            reqPath: req.url, // 错误路由
+        // let logBody = {
+        //     ...resBody,
+        //     timestamp: new Date().toISOString(), // 错误日期
+        //     reqPath: req.url, // 错误路由
+        // }
+        if(status===404){
+            this.appLogger.warn(` ${message.message} ${req.ip}`,"ExceptionResponse")
+        }else{
+            this.appLogger.error(`${req.url},${req.method},${req.ip},${exception.stack}`,exception.stack,'ExceptionResponse')
         }
-        Logger.error("错误信息",JSON.stringify(logBody),'HttpExceptionFilter')
+        // Logger.error("错误信息",JSON.stringify(logBody),'HttpExceptionFilter')
         res.status(200).json(resBody)
     }
     

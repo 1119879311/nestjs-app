@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import * as path from "path";
 import * as fs from "fs"
-import { dataFormat, getFileType, signRonder } from "src/common/util";
+import { dataFormat, getFileType, signRonder } from "src/shared/util";
 import { ConfigService } from "@nestjs/config";
 
 @Injectable()
@@ -19,10 +19,10 @@ export class UploadService {
         // let saveDirPath = path.join(process.cwd(),staticPath,body.type)
         // await mkdirSync(saveDirPath)
         let staticPath = this.configService.get("upload_path")
-        console.log(staticPath)
+      
         let result:string[] = []
         for (const file of files) {
-            console.log("file",file)
+          
             let fileTypeDir = getFileType(file.mimetype||'');
             let year = dataFormat(new Date(),'yyyy')
             let saveDirPath = path.join(process.cwd(),staticPath,fileTypeDir,year);//绝对路径
@@ -46,5 +46,5 @@ async function mkdirSync(dirname) {
             return true
         }
     }
-  }
+}
 

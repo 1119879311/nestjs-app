@@ -39,7 +39,6 @@ export const Aes = {
             let strIv = iv.toString("hex")
             return encrypted+'.'+strIv;
         } catch (error) {
-            // console.log(error)
             return null;   
         }
         
@@ -61,7 +60,7 @@ export const Aes = {
             decrypted += decipher.final('utf8');
             return decrypted
         } catch (error) {
-            // console.log(error)
+            
             return null;   
         }
     }
@@ -215,16 +214,10 @@ export function getFileType(mimetype){
         return "audios"
     }
     return "files"
+}
 
-    // let imageReg = /\.(png|jpe?g|gif|svg)$/i
-    // if(imageReg.test(fileName)){
-    //     return "images"
-    // }
-
-    // if(/\.(ogg|mp4|mp3)$/i.test(fileName)){
-    //     return "video"
-    // }
-    // return "files"
+export function getClientIp(req){
+    return req.headers['x-forwarded-for'] || req.headers['x-real-ip']||req.ip
 }
 
 

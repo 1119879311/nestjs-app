@@ -1,4 +1,4 @@
-import { modifyStatusDto } from 'src/common/dto/modifyStatus.dto';
+import { modifyStatusDto } from 'src/shared/dto/modifyStatus.dto';
 import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -92,7 +92,6 @@ export class RoleService {
           
             return  null
         } catch (error) {
-            console.log(error.message)
             throw new InternalServerErrorException("更新失败")
         }
     }
@@ -115,7 +114,7 @@ export class RoleService {
 
         let role = await this.tkRoleRepository.findOne(data.id,{relations:['auths']})
         let addAuthIds = data.authIds.split(',').filter(itme=>itme)
-        console.log("data.authIds---",addAuthIds)
+     
         //第一种事务写法(隐式)
         return await getManager().transaction( async transactionalEntityManager => {
             await transactionalEntityManager.createQueryBuilder()

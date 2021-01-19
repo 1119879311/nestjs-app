@@ -1,10 +1,10 @@
 
 import { Body, Controller, Get, Post, Query} from '@nestjs/common';
-import { NoAuth } from 'src/common/decorators/noAuth.decorators';
+import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
 import { createArticleDto, FindArtilceListDto } from './dto/index.dto';
 import {ArticleService} from "./article.service"
-import { modifyStatusAllDto, veryfyIdsDto } from 'src/common/dto/index.dto';
-
+import { modifyStatusAllDto, veryfyIdsDto } from 'src/shared/dto/index.dto';
+import {Permissions} from "src/shared/decorators/permissions.decorators"
 
 @Controller('article')
 export class ArticleController {
@@ -20,8 +20,9 @@ export class ArticleController {
         return this.articleService.findList(query)
     }
     @Post("save")
+    @Permissions("per-saveArticle")
     save(@Body() data:createArticleDto){
-        console.log("save",data)
+      
         if(data.id){
             return this.articleService.update(data)
         }
@@ -29,12 +30,14 @@ export class ArticleController {
     }
 
     @Post("delete")
+    @Permissions("per-deleteArticle")
     delete(@Body() data:veryfyIdsDto){
         return this.articleService.delete(data.ids)
     }
 
      //修改状态
      @Post("modifyStatus")
+    @Permissions("per-modifyStatusArticle")
      modifyStatus(@Body() data:modifyStatusAllDto){
          return this.articleService.modifyStatusUser(data)
      }

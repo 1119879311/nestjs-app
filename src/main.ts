@@ -1,26 +1,26 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { BadRequestException, ValidationError, ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { ResponseInterceptor } from './common/interceptor/response.interceptor';
-// import { Aes } from './common/util';
+import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
+import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { AppLogger } from './shared/logger/logger.service';
+import { LoggerMiddleware } from './shared/middleware/logger.middleware';
 const port = process.env.PORT||3000;
 
-// let res = Aes.encryption('123456',"password_secret")
-// console.log('加密',res)
-// // let resD = Aes.decrypt(res,"password_secret")
-// // console.log('解密',resD)
-// // console.log(TimeTranform("5m"),1000*60*5)
 console.log("当前运行环境:",process.env.NODE_ENV)
 async function bootstrap() {
+  const logger = new AppLogger()
   const app = await NestFactory.create<NestExpressApplication>(AppModule,{
-      cors:true
+      cors:true,
+      logger:logger
   });
+    //app.useLogger(new AppLogger())
+    //app.useLogger(app.get(AppLogger))
    // 设置所有 api 访问前缀
   app.setGlobalPrefix('/api')
-
   app.useGlobalPipes(new ValidationPipe({
     transform: true,
     whitelist: true, //如果设置为 true，则验证程序将除去未使用任何装饰器的属性的已验证对象
@@ -34,9 +34,26 @@ async function bootstrap() {
         throw new BadRequestException()
     }
   }))
-  app.useGlobalFilters(new HttpExceptionFilter())
-  app.useGlobalInterceptors(new ResponseInterceptor())
-  app.useStaticAssets(join(__dirname, '..', 'theme'),{prefix:"/theme/"});
-  await app.listen(port);
+  app.useGlobalFilters(new HttpExceptionFilter(logger))
+  app.useGlobalInterceptors(new ResponseInterceptor(logger))
+//   app.use(LoggerMiddleware)
+//   let logger = app.get(AppLogger)
+  let appConfig = app.get(ConfigService)
+  let openStaticAssets = appConfig.get("openStaticAssets")
+  if(openStaticAssets==="1"){
+    logger.log("开启静态资源托管")
+    app.useStaticAssets(join(__dirname, '..', 'theme'),{prefix:"/theme/"});
+    app.useStaticAssets(join(__dirname, '..', 'build'));
+  }else{
+    logger.log("关闭静态资源托管")
+  }
+  try {
+      throw new Error("sfsdf")
+  } catch (err) {
+    logger.error(err)
+  }
+  await app.listen(port,'0.0.0.0',()=>{
+      logger.log(`server is successful started in port:${port},http://127.0.0.1:${port}`,"AppServer")
+  });
 }
 bootstrap();

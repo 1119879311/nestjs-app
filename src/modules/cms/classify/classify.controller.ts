@@ -1,8 +1,9 @@
 import { ClassifyService } from './classify.service';
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { NoAuth } from 'src/common/decorators/noAuth.decorators';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
 import { FindClassifyListDto, SavaClassifyDto } from './dto/index.dto';
-import { modifyStatusAllDto, veryfyIdDto, veryfyIdsDto } from 'src/common/dto/index.dto';
+import { modifyStatusAllDto, veryfyIdDto } from 'src/shared/dto/index.dto';
+import {Permissions} from "src/shared/decorators/permissions.decorators"
 
 @Controller('classify')
 export class ClassifyController {
@@ -16,17 +17,20 @@ export class ClassifyController {
     }
 
     @Post("save")
+    @Permissions("per-saveClassify")
     async save(@Body() data:SavaClassifyDto){ 
         return this.classifyService.save(data)
     }
 
      //修改状态
      @Post("modifyStatus")
+     @Permissions("per-modifyStatusClassify")
      modifyStatus(@Body() data:modifyStatusAllDto){
-         return this.classifyService.modifyStatusUser(data)
+        return this.classifyService.modifyStatusUser(data)
      }
 
     @Post("delete")
+    @Permissions("per-deleteClassify")
     async delete(@Body() data:veryfyIdDto){
         return this.classifyService.delete(data.id)
     }

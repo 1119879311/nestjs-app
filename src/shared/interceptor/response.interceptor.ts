@@ -1,9 +1,11 @@
 
 // 全局响应拦截器
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
-import { Response } from "express";
+import {Request} from "express";
 import { Observable } from "rxjs";
 import {map} from "rxjs/operators"
+import { AppLogger } from "../logger/logger.service";
+import { getClientIp } from "../util";
 // 声明
 interface ResBody<T>{
     data:T
@@ -13,12 +15,17 @@ interface ResBody<T>{
 
 @Injectable()
 export class ResponseInterceptor<T> implements NestInterceptor<T,ResBody<T>>{
+    constructor( private readonly appLogger:AppLogger){}
     intercept(context: ExecutionContext, next: CallHandler<T>): Observable<ResBody<T>> | Promise<Observable<ResBody<T>>> {
         const ctx = context.switchToHttp();
-        const res = ctx.getResponse();
-        console.log("before:","全局响应拦截器之前")
+        // const res = ctx.getResponse<Response>();
+        const req = ctx.getRequest<Request>();
+        // console.log("before:","全局响应拦截器之前")
+        let now = Date.now();
+        this.appLogger.log(`${req.originalUrl},${getClientIp(req)}`,"BeforeResponse")
         return next.handle().pipe(map((data:T)=>{
-            console.log("after:",'全局响应拦截器之后')
+            this.appLogger.log(`${req.originalUrl},${getClientIp(req)},【${Date.now() - now}ms】`,"AfterResponse")
+    
             return {
                 statusCode: 200, 
                 data: data, 

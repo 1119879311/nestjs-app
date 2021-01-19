@@ -1,18 +1,19 @@
-import { tk_authority } from './../../entity/tk_authority.entity';
-// import { tk_role } from './../../entity/tk_role.entity';
+import { AppLogger } from 'src/shared/logger/logger.service';
+import { tk_authority } from 'src/entity/tk_authority.entity';
 import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Aes, oneToTree } from "src/common/util";
+import { Aes, oneToTree } from "src/shared/util";
 import { tk_user } from "src/entity/tk_user.entity";
 import { Repository } from "typeorm";
-// import { AuthService } from "../auth/auth.service";
+
 
 
 @Injectable()
 export class UserCenterService{
     constructor(
         private configService:ConfigService,
+        private appLogger:AppLogger,
         // private authService:AuthService,
         @InjectRepository(tk_user) private readonly tkUserRepository: Repository<tk_user>,
         // @InjectRepository(tk_role) private readonly tkRoleRepository: Repository<tk_role>,

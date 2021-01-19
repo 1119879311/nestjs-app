@@ -1,9 +1,9 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { modifyStatusAllDto } from 'src/common/dto/modifyStatus.dto';
-import { Aes,  isToEmpty } from 'src/common/util';
-import {  BuildLimit, BuildWhere, BuilSql } from 'src/common/util/dbsql';
+import { modifyStatusAllDto } from 'src/shared/dto/modifyStatus.dto';
+import { Aes,  isToEmpty } from 'src/shared/util';
+import {  BuildLimit, BuildWhere, BuilSql } from 'src/shared/util/dbsql';
 import { tk_role } from 'src/entity/tk_role.entity';
 import { tk_user } from 'src/entity/tk_user.entity';
 import { getManager, Repository } from 'typeorm';
@@ -33,7 +33,7 @@ export class MannagerService {
      *  group by f1.id;
      */
     async find(data:FindUserDto){
-        console.log(data)
+      
         let page =(data.page||this.configService.get("page"))-1;
         let offset =data.offset|| this.configService.get("offset");
         let resBuilder = await this.tkUserRepository
@@ -153,9 +153,6 @@ export class MannagerService {
         saveUser.status=data.status
         saveUser.user_type=data.user_type
         saveUser.roles = data.roleIds?await this.tkRoleRepository.findByIds(data.roleIds.split(',')):[]
-        // if(data.roleIds){
-        //     saveUser.roles = await this.tkRoleRepository.findByIds(data.roleIds.split(','))
-        // }
         let res = await this.tkUserRepository.save([saveUser])
         return res[0].id
     }
@@ -175,7 +172,7 @@ export class MannagerService {
      */
     async delete(ids:string){ 
         let res = await this.tkUserRepository.createQueryBuilder().delete()
-            .where("id in (:id) AND status=2 ", { id: ids.split(',') }).execute();
+            .where("id in (:id) AND status=2 AND user_type!=1", { id: ids.split(',') }).execute();
         if(res.affected>0){
             return null
         }

@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { isToEmpty } from 'src/common/util';
+import { isToEmpty } from 'src/shared/util';
 import { tk_message } from 'src/entity/tk_message.entity';
 import { Repository } from 'typeorm';
 import { SavaMessageDto } from './dto/index.dto';
@@ -16,7 +16,7 @@ export class MessageService {
     ){}
 
     async findList(data:any){
-        console.log(data)
+        
         let page =(data.page||this.configService.get("page"))-1;
         let offset =data.offset|| this.configService.get("offset");
         let build = await this.tkMessageRepository.createQueryBuilder('m')
@@ -59,7 +59,7 @@ export class MessageService {
             }
             towsData.push(towArr)
         }
-        console.log(towsData)
+       
         let resBuffer = nodeXlsx.build([{name:"sheet1",data:towsData}])
         return resBuffer
         // return {cols:cols,tows:towsData}

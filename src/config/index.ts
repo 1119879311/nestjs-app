@@ -1,7 +1,7 @@
 import JwtConfig from "./jwt.config"
 import MysqlConfig from "./mysql.config"
 const GloadConfig = ()=>({
-
+    NODE_ENV:process.env.NODE_ENV,
     port:parseInt(process.env.PORT, 10) || 3000,
 
     password_secret:'password_secret', //密码加密密钥

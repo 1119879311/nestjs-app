@@ -1,8 +1,8 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { modifyStatusAllDto } from 'src/common/dto/index.dto';
-import { isToEmpty } from 'src/common/util';
+import { modifyStatusAllDto } from 'src/shared/dto/index.dto';
+import { isToEmpty } from 'src/shared/util';
 import { tk_tag } from 'src/entity/tk_tag.entity';
 import { Repository } from 'typeorm';
 import { FindTagListDto, SavaTagDto } from './dto/index.dto';
@@ -52,7 +52,7 @@ export class TagService {
     }
 
     async save(data:SavaTagDto){
-        console.log(data)
+        
         let saveData = new tk_tag()
         saveData.name=data.name
         saveData.sort=data.sort||10

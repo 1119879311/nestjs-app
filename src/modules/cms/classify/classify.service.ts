@@ -1,9 +1,8 @@
-import { BuilSql } from 'src/common/util/dbsql';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { modifyStatusAllDto } from 'src/common/dto/index.dto';
-import { isToEmpty } from 'src/common/util';
+import { modifyStatusAllDto } from 'src/shared/dto/index.dto';
+import { isToEmpty } from 'src/shared/util';
 import { tk_classify } from 'src/entity/tk_classify.entity';
 import { getManager, Repository } from 'typeorm';
 import { FindClassifyListDto, SavaClassifyDto } from './dto/index.dto';
@@ -50,7 +49,7 @@ export class ClassifyService {
     }
 
     async save(data: SavaClassifyDto) {
-        console.log(data)
+       
         let saveData = new tk_classify()
         saveData.name = data.name
         saveData.sort = data.sort || 10

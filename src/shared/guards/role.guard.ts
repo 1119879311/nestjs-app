@@ -11,7 +11,7 @@ export class RoleGuard implements CanActivate {
         private userCenterService:UserCenterService
     ){}
      canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        console.log("角色守卫")
+        // console.log("角色守卫")
         let permissions = this.reflector.get<string>("permissions",context.getHandler())
         if(!permissions) return true;
         const req = context.switchToHttp().getRequest();

@@ -21,4 +21,7 @@ export class SavaMessageDto{
     @IsOptional()
     telephone:string
 
+    @IsOptional()
+    company:string
+
 }

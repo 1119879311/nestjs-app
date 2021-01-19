@@ -8,6 +8,9 @@ export class tk_message{
     @Column({comment:'邮箱'})
     email:string
 
+    @Column({comment:'号码',nullable:true})
+    telephone:string
+
     @Column({comment:'内容',nullable:true})
     content:string
 
@@ -17,8 +20,10 @@ export class tk_message{
     @Column({comment:'地址',nullable:true})
     address:string
 
-    @Column({comment:'号码',nullable:true})
-    telephone:string
+    @Column({comment:'公司/组织',nullable:true})
+    company:string
+
+   
 
     @CreateDateColumn({comment:'创建时间'})
     createtime:string

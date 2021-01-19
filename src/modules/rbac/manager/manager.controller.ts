@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
 import {CreateUserDto,FindUserDto} from './dto/index.dto';
 import { MannagerService } from './manager.service';
-import {Permissions} from "src/common/decorators/permissions.decorators"
-import {  veryfyIdsDto, modifyStatusAllDto } from 'src/common/dto/index.dto';
+import {Permissions} from "src/shared/decorators/permissions.decorators"
+import {  veryfyIdsDto, modifyStatusAllDto } from 'src/shared/dto/index.dto';
 
 @Controller('manager')
 export class ManagerController {

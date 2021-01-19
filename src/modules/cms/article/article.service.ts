@@ -5,8 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getManager, Repository } from 'typeorm';
 import { createArticleDto, FindArtilceListDto } from './dto/index.dto';
-import { isToEmpty } from 'src/common/util';
-import { modifyStatusAllDto } from 'src/common/dto/index.dto';
+import { isToEmpty } from 'src/shared/util';
+import { modifyStatusAllDto } from 'src/shared/dto/index.dto';
 import { ClassifyService } from '../classify/classify.service';
 
 @Injectable()
@@ -80,8 +80,7 @@ export class ArticleService {
         })
         .then(res=> res )
         .catch(err=>{
-            console.log(err)
-            throw new InternalServerErrorException("分配资源失败") 
+            throw new InternalServerErrorException("新增失败") 
         });  
     }
     async update(data:createArticleDto){
@@ -102,8 +101,7 @@ export class ArticleService {
             let addIds = newId.filter(itme=>!oldId.includes(Number(itme)))
             
             let removeIds =oldId.filter(itme=>!newId.includes(itme+''))
-            console.log(addIds,removeIds)
-
+           
             return await getManager().transaction( async transactionalEntityManager => {
                 await transactionalEntityManager.createQueryBuilder()
                 .update(tk_article).set(saveData).where("id =:id",{id:data.id}).execute();
@@ -115,8 +113,7 @@ export class ArticleService {
             })
             .then(()=> null )
             .catch(err=>{
-                console.log(err)
-                throw new InternalServerErrorException("分配资源失败") 
+                throw new InternalServerErrorException("更新失败") 
             });
     }
 

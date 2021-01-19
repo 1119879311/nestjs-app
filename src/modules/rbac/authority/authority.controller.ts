@@ -1,8 +1,8 @@
-import { modifyStatusDto, veryfyIdDto } from 'src/common/dto/index.dto';
+import { modifyStatusDto, veryfyIdDto } from 'src/shared/dto/index.dto';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthorityService } from './authority.service';
 import { SaveAuthorityDto } from './dto/index.dto';
-import {Permissions} from "src/common/decorators/permissions.decorators"
+import {Permissions} from "src/shared/decorators/permissions.decorators"
 @Controller('authority')
 export class AuthorityController {
     constructor(

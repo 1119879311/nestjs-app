@@ -1,10 +1,12 @@
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 
 @Injectable()
 export class AuthService{
     constructor(
-        private jwtService:JwtService
+        private jwtService:JwtService,
+        private readonly configService:ConfigService
     ){}
     
     /**
@@ -21,7 +23,10 @@ export class AuthService{
      * @param payload 生成签名jwt
      */
     async loginSign<T extends {}>(payload:T){
-        
         return this.jwtService.sign({...payload})
+    }
+
+    async jwtVerify(token:string){
+        return await this.jwtService.verify(token,{secret:this.configService.get('JwtConfig.secret')})
     }
 }

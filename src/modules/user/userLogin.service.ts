@@ -2,7 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from './../auth/auth.service';
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import * as svgCaptcha from "svg-captcha"
-import { Aes, TimeTranform } from 'src/common/util';
+import { Aes, TimeTranform } from 'src/shared/util';
 import { userLoginDto } from './dto/userLogin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -31,10 +31,7 @@ export class UserLoginService{
         // 密码错误
         
         let aesPassword = Aes.decrypt(userInfo.password,this.configService.get('password_secret'))
-        console.log("userInfo",userInfo)
-        console.log("aesPassword",aesPassword)
-        console.log("data.password",data.password)
-        
+      
         if(!aesPassword||aesPassword!=data.password){
             throw new HttpException('密码错误', HttpStatus.BAD_REQUEST)
         }
@@ -66,7 +63,6 @@ export class UserLoginService{
         var captcha = svgCaptcha.create(codeConfig);
         let codeText = captcha.text.toLocaleLowerCase();
         let expiresIn = TimeTranform(this.configService.get("code_expiresIn"))
-        console.log("expiresIn---:"+this.configService.get("code_expiresIn"),expiresIn)
         let data = {codeText:codeText,time:new Date().getTime(),expiresIn:expiresIn};
         let codeToken = Aes.encryption(JSON.stringify(data),codeText.toLowerCase())
         return {codeSvg:captcha.data,codeToken:codeToken}
@@ -79,7 +75,6 @@ export class UserLoginService{
      */
     verifyCode(encryData:string,dataKey:string):boolean{
         let verifyStr = Aes.decrypt(encryData,dataKey.toLowerCase());
-        console.log(verifyStr)
         if(!verifyStr) return false;
         let verifyRes = JSON.parse(verifyStr);
         if(new Date().getTime()>=verifyRes.time+verifyRes.expiresIn){
