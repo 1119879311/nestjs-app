@@ -19,6 +19,7 @@ export class CustomOrmLogger implements Logger {
         this.appLogger.log(`[query]:${query} [${time}]`)
     }
     logSchemaBuild(message: string, queryRunner?: QueryRunner) {
+       
         this.appLogger.log(`${message} `)
     }
     logMigration(message: string, queryRunner?: QueryRunner) {

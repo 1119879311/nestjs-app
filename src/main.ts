@@ -7,7 +7,6 @@ import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppLogger } from './shared/logger/logger.service';
-import { LoggerMiddleware } from './shared/middleware/logger.middleware';
 const port = process.env.PORT||3000;
 
 console.log("当前运行环境:",process.env.NODE_ENV)
@@ -46,11 +45,6 @@ async function bootstrap() {
     app.useStaticAssets(join(__dirname, '..', 'build'));
   }else{
     logger.log("关闭静态资源托管")
-  }
-  try {
-      throw new Error("sfsdf")
-  } catch (err) {
-    logger.error(err)
   }
   await app.listen(port,'0.0.0.0',()=>{
       logger.log(`server is successful started in port:${port},http://127.0.0.1:${port}`,"AppServer")
