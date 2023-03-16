@@ -14,8 +14,8 @@ export class ClassifyService {
         @InjectRepository(tk_classify) private readonly tkClassifyRepository: Repository<tk_classify>,
     ) { }
     async findList(data: FindClassifyListDto) {
-        let whereVal: any = {}
-        let wherekey: string[] = []
+        const whereVal: any = {}
+        const wherekey: string[] = []
 
         if (isToEmpty(data.startTime)) {
             wherekey.push(' c.createtime >= :startTime ')
@@ -30,19 +30,19 @@ export class ClassifyService {
             wherekey.push(` c.name like '%${data.name}%' `)
         }
 
-        let page = (data.page || this.configService.get("page")) - 1;
-        let offset = data.offset || this.configService.get("offset");
-        let resBuild = await this.tkClassifyRepository
+        const page = (data.page || this.configService.get("page")) - 1;
+        const offset = data.offset || this.configService.get("offset");
+        const resBuild = await this.tkClassifyRepository
             .createQueryBuilder('c')
             // .leftJoinAndMapOne('c.parent',tk_classify, 'parent', 'c.pid=parent.id')
             .where(wherekey.join(' AND '), whereVal)
             .orderBy({ "c.sort": "DESC" })
 
         if (data.isPage) {
-            let res = await resBuild.getMany()
+            const res = await resBuild.getMany()
             return { rows: res, total: 0 }
         } else {
-            let res = await resBuild.skip(page * offset).take(offset).getManyAndCount();
+            const res = await resBuild.skip(page * offset).take(offset).getManyAndCount();
             return { rows: res[0], total: res[1] };
         }
 
@@ -50,17 +50,17 @@ export class ClassifyService {
 
     async save(data: SavaClassifyDto) {
        
-        let saveData = new tk_classify()
+        const saveData = new tk_classify()
         saveData.name = data.name
         saveData.sort = data.sort || 10
         saveData.status = data.status || 1
         saveData.pid = data.pid || 0
         if (data.id) {
-            let res = await this.tkClassifyRepository.update({ id: data.id }, saveData)
+            const res = await this.tkClassifyRepository.update({ id: data.id }, saveData)
             return res.affected;
         } else {
             try {
-                let res = await this.tkClassifyRepository.createQueryBuilder("c")
+                const res = await this.tkClassifyRepository.createQueryBuilder("c")
                     .insert().values(saveData).execute()
                 return res.identifiers[0].id;
             } catch (error) {
@@ -72,7 +72,7 @@ export class ClassifyService {
     }
     //单个/批量
     async modifyStatusUser(data: modifyStatusAllDto) {
-        let res = await this.tkClassifyRepository.createQueryBuilder("a").update(tk_classify)
+        const res = await this.tkClassifyRepository.createQueryBuilder("a").update(tk_classify)
             .set({ status: data.status }).where("id in (:id)", { id: data.ids.split(',') }).execute();
         if (res.affected > 0) {
             return res.affected
@@ -81,7 +81,7 @@ export class ClassifyService {
     }
     //但个删除
     async delete(id: number) {
-        let res = await this.tkClassifyRepository.findOne(id)
+        const res = await this.tkClassifyRepository.findOne(id)
         if (!res || res.status === 1) {
             throw new BadRequestException("删除失败,数据不存在或者处于正常态无法删除")
         }
@@ -91,7 +91,7 @@ export class ClassifyService {
                 .delete().from(tk_classify, 'c')
                 .where("id=:id AND status=2", { id: id })
                 .execute()
-            let sql = `update tK_classify as c1,(select id from tk_classify where pid=?) as c2 set c1.pid=? where c1.id in (c2.id)`
+            const sql = `update tK_classify as c1,(select id from tk_classify where pid=?) as c2 set c1.pid=? where c1.id in (c2.id)`
             await transactionalEntityManager.query(sql, [id, res.pid])
         })
             .then(() => null)
@@ -101,9 +101,9 @@ export class ClassifyService {
             });
     }
    
-    async findClassifyIdChild(id: Number, isSql?: false) {
+    async findClassifyIdChild(id: number, isSql?: false) {
         
-        let sql = `
+        const sql = `
             SELECT data1.level, data2.* FROM( 
                 SELECT  @ids as _ids, 
                 (SELECT @ids := GROUP_CONCAT(id)  FROM tk_classify  WHERE FIND_IN_SET(pid, @ids) ) as cids, 
@@ -117,7 +117,7 @@ export class ClassifyService {
         if (isSql) {
             return { sql, data: [id] }
         }
-        let res: any[] = await getManager().query(sql, [id, id])
+        const res: any[] = await getManager().query(sql, [id, id])
         return res.map(itme => itme.id);
     }
     /**
@@ -139,7 +139,7 @@ export class ClassifyService {
             WHERE FIND_IN_SET(data2.id, data1._ids) 
             ORDER BY level, id
         `
-        let insertSql = 'select id from tk_classify where name=?';
+        const insertSql = 'select id from tk_classify where name=?';
        
         if(field==='id'){
             sql = sql.replace(new RegExp(":field",'ig'),`?`)
