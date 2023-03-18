@@ -1,8 +1,8 @@
-import { modifyStatusDto } from 'src/shared/dto/index.dto';
+import { modifyStatusDto } from '@/shared/dto/index.dto';
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { oneToTree } from 'src/shared/util';
-import { tk_authority } from 'src/entity/tk_authority.entity';
+import { oneToTree } from '@/shared/util';
+import { tk_authority } from '@/entity/tk_authority.entity';
 import { Repository } from 'typeorm';
 import { SaveAuthorityDto } from './dto/index.dto';
 

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
-import { modifyStatusAllDto, veryfyIdsDto } from 'src/shared/dto/index.dto';
+import { NoAuth } from '@/shared/decorators/noAuth.decorators';
+import { modifyStatusAllDto, veryfyIdsDto } from '@/shared/dto/index.dto';
 import {  FindImagesListDto, SaveImagesDto } from './dto/index.dto';
 import { ImagesService } from './images.service';
 import {Permissions} from "src/shared/decorators/permissions.decorators"

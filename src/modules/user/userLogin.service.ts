@@ -2,11 +2,11 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from './../auth/auth.service';
 import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import * as svgCaptcha from "svg-captcha"
-import { Aes, TimeTranform } from 'src/shared/util';
+import { Aes, TimeTranform } from '@/shared/util';
 import { userLoginDto } from './dto/userLogin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { tk_user } from 'src/entity/tk_user.entity';
+import { tk_user } from '@/entity/tk_user.entity';
 
 @Injectable()
 export class UserLoginService{

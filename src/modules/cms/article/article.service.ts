@@ -1,12 +1,12 @@
-import { tk_classify } from 'src/entity/tk_classify.entity';
-import { tk_article } from 'src/entity/tk_article.entity';
+import { tk_classify } from '@/entity/tk_classify.entity';
+import { tk_article } from '@/entity/tk_article.entity';
 import {  BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { getManager, Repository } from 'typeorm';
 import { createArticleDto, FindArtilceListDto } from './dto/index.dto';
-import { isToEmpty } from 'src/shared/util';
-import { modifyStatusAllDto } from 'src/shared/dto/index.dto';
+import { isToEmpty } from '@/shared/util';
+import { modifyStatusAllDto } from '@/shared/dto/index.dto';
 import { ClassifyService } from '../classify/classify.service';
 
 @Injectable()

@@ -1,9 +1,9 @@
 import { Controller, Get, Query, Body, Post, Res } from '@nestjs/common';
-import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
+import { NoAuth } from '@/shared/decorators/noAuth.decorators';
 import { SavaMessageDto } from './dto/index.dto';
 import { MessageService } from './message.service';
 import {Response} from "express"
-import { dataFormat, signRonder } from 'src/shared/util';
+import { dataFormat, signRonder } from '@/shared/util';
 @Controller('message')
 export class MessageController {
     constructor(

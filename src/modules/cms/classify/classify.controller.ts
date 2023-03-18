@@ -1,8 +1,8 @@
 import { ClassifyService } from './classify.service';
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
-import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
+import { NoAuth } from '@/shared/decorators/noAuth.decorators';
 import { FindClassifyListDto, SavaClassifyDto } from './dto/index.dto';
-import { modifyStatusAllDto, veryfyIdDto } from 'src/shared/dto/index.dto';
+import { modifyStatusAllDto, veryfyIdDto } from '@/shared/dto/index.dto';
 import {Permissions} from "src/shared/decorators/permissions.decorators"
 
 @Controller('classify')

@@ -1,8 +1,8 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { isToEmpty } from 'src/shared/util';
-import { tk_message } from 'src/entity/tk_message.entity';
+import { isToEmpty } from '@/shared/util';
+import { tk_message } from '@/entity/tk_message.entity';
 import { Repository } from 'typeorm';
 import { SavaMessageDto } from './dto/index.dto';
 import nodeXlsx from "node-xlsx"

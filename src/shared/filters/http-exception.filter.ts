@@ -1,4 +1,4 @@
-import { AppLogger } from 'src/shared/logger/logger.service';
+import { AppLogger } from '@/shared/logger/logger.service';
 import { ArgumentsHost, Catch, ExceptionFilter,HttpException, HttpStatus } from "@nestjs/common";
 import { Request, Response } from 'express';
 // 全局异常过滤器处理

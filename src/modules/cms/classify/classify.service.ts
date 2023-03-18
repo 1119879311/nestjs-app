@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { modifyStatusAllDto } from 'src/shared/dto/index.dto';
-import { isToEmpty } from 'src/shared/util';
-import { tk_classify } from 'src/entity/tk_classify.entity';
+import { modifyStatusAllDto } from '@/shared/dto/index.dto';
+import { isToEmpty } from '@/shared/util';
+import { tk_classify } from '@/entity/tk_classify.entity';
 import { getManager, Repository } from 'typeorm';
 import { FindClassifyListDto, SavaClassifyDto } from './dto/index.dto';
 

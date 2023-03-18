@@ -2,7 +2,7 @@ import { UploadService } from './upload.service';
 import { Body, Controller, Post, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import {Permissions} from "src/shared/decorators/permissions.decorators"
-// import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
+// import { NoAuth } from '@/shared/decorators/noAuth.decorators';
 
 @Controller('upload')
 export class UploadController {

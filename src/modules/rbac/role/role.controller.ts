@@ -1,4 +1,4 @@
-import { modifyStatusDto, veryfyIdDto } from 'src/shared/dto/index.dto';
+import { modifyStatusDto, veryfyIdDto } from '@/shared/dto/index.dto';
 import { RoleService } from './role.service';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { FindRoleListDto, SaveRoleDto, TasksAuthorityDto } from './dto/index.dto';

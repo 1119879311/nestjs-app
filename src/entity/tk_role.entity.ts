@@ -1,5 +1,5 @@
 import { tk_authority } from './tk_authority.entity';
-import { tk_user } from 'src/entity/tk_user.entity';
+import { tk_user } from '@/entity/tk_user.entity';
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 // import { tk_user_role } from './tk_user_role.entity';
 /**

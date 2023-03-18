@@ -1,4 +1,4 @@
-import { tk_article } from 'src/entity/tk_article.entity';
+import { tk_article } from '@/entity/tk_article.entity';
 import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 

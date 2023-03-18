@@ -1,5 +1,5 @@
-import { AppLogger } from 'src/shared/logger/logger.service';
-import { tk_authority } from 'src/entity/tk_authority.entity';
+import { AppLogger } from '@/shared/logger/logger.service';
+import { tk_authority } from '@/entity/tk_authority.entity';
 import { BadRequestException, ForbiddenException, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";

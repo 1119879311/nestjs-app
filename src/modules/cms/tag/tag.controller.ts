@@ -1,9 +1,9 @@
 import { SavaTagDto } from './dto/create.dto';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
+import { NoAuth } from '@/shared/decorators/noAuth.decorators';
 import { FindTagListDto } from './dto/index.dto';
 import { TagService } from './tag.service';
-import { modifyStatusAllDto, veryfyIdsDto } from 'src/shared/dto/index.dto';
+import { modifyStatusAllDto, veryfyIdsDto } from '@/shared/dto/index.dto';
 import {Permissions} from "src/shared/decorators/permissions.decorators"
 
 @Controller('tag')

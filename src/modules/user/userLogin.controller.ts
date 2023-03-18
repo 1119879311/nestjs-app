@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { UserLoginService } from './userLogin.service';
 import { Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from "@nestjs/common";
-import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
+import { NoAuth } from '@/shared/decorators/noAuth.decorators';
 import { userLoginDto } from './dto/userLogin.dto';
 
 

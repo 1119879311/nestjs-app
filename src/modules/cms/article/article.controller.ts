@@ -1,9 +1,9 @@
 
 import { Body, Controller, Get, Post, Query} from '@nestjs/common';
-import { NoAuth } from 'src/shared/decorators/noAuth.decorators';
+import { NoAuth } from '@/shared/decorators/noAuth.decorators';
 import { createArticleDto, FindArtilceListDto } from './dto/index.dto';
 import {ArticleService} from "./article.service"
-import { modifyStatusAllDto, veryfyIdsDto } from 'src/shared/dto/index.dto';
+import { modifyStatusAllDto, veryfyIdsDto } from '@/shared/dto/index.dto';
 import {Permissions} from "src/shared/decorators/permissions.decorators"
 
 @Controller('article')

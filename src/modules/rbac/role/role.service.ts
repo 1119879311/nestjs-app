@@ -1,8 +1,8 @@
-import { modifyStatusDto } from 'src/shared/dto/modifyStatus.dto';
+import { modifyStatusDto } from '@/shared/dto/modifyStatus.dto';
 import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { tk_role } from 'src/entity/tk_role.entity';
+import { tk_role } from '@/entity/tk_role.entity';
 import {  getManager, Repository } from 'typeorm';
 import { FindRoleListDto, SaveRoleDto, TasksAuthorityDto } from './dto/index.dto';
 

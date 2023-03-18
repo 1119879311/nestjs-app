@@ -1,4 +1,4 @@
-import { modifyStatusDto, veryfyIdDto } from 'src/shared/dto/index.dto';
+import { modifyStatusDto, veryfyIdDto } from '@/shared/dto/index.dto';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthorityService } from './authority.service';
 import { SaveAuthorityDto } from './dto/index.dto';

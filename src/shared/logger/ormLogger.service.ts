@@ -1,4 +1,4 @@
-import { AppLogger } from 'src/shared/logger/logger.service';
+import { AppLogger } from '@/shared/logger/logger.service';
 import { Logger, QueryRunner } from "typeorm";
 export class CustomOrmLogger implements Logger {
     appLogger = new AppLogger()
