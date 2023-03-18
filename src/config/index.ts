@@ -1,7 +1,8 @@
 import JwtConfig from "./jwt.config"
-// import MysqlConfig from "./mysql.config"
+import MysqlConfig from "./mysql.config"
 const GloadConfig = ()=>({
     NODE_ENV:process.env.NODE_ENV,
+    
     port:parseInt(process.env.PORT, 10) || 3000,
 
     password_secret:'password_secret', //密码加密密钥
@@ -15,6 +16,6 @@ const GloadConfig = ()=>({
     upload_path:process.env.upload_path||'/theme/upload'
 })
 
-const AppConfig = [GloadConfig,JwtConfig]
+const AppConfig = [GloadConfig,JwtConfig,MysqlConfig]
 
 export default AppConfig;
