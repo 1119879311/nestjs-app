@@ -15,13 +15,13 @@ export class tk_authority{
     @Column({comment:'资源地址'})  
     url:string
 
-    @Column({type:'int',unique:false,comment:'资源类型：1是菜单(与前端关联)，2是api接口(与后端关联)'})
+    @Column({type:'int',unique:false,comment:'资源类型：1是菜单(与前端关联),2是api接口(与后端关联),3页面路由'})
     auth_type:number
 
     @Column({comment:'上级id'})  
     pid:number
 
-    @Column({type:'int',default:1,unique:false,comment:'用户状态：1是启用，其他是禁用'})
+    @Column({type:'int',default:1,unique:false,comment:'资源状态：1是启用，其他是禁用'})
     status:number
 
     @Column({type:'int',default:10,unique:false,comment:'排序'})

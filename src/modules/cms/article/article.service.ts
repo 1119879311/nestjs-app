@@ -3,7 +3,7 @@ import { tk_article } from '@/entity/tk_article.entity';
 import {  BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { getManager, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { createArticleDto, FindArtilceListDto } from './dto/index.dto';
 import { isToEmpty } from '@/shared/util';
 import { modifyStatusAllDto } from '@/shared/dto/index.dto';
@@ -13,6 +13,7 @@ import { ClassifyService } from '../classify/classify.service';
 export class ArticleService {
     constructor(
         private configService:ConfigService,
+        private dataSource: DataSource,
         private classifyService:ClassifyService,
         @InjectRepository(tk_article) private readonly tkArticleRepository: Repository<tk_article>,
         // @InjectRepository(tk_tag) private readonly tkTagRepository: Repository<tk_tag>,
@@ -45,7 +46,7 @@ export class ArticleService {
         }else{
             res = await resBuilder.getManyAndCount();
         }
-
+       
         return {rows:res[0],total:res[1]};
     }
     async findDetail(id:number,status:number|string){
@@ -68,7 +69,7 @@ export class ArticleService {
         saveData.cid = data.cid||null
         saveData.sort = data.sort||10
         saveData.status=data.status||1;
-        return await getManager().transaction( async transactionalEntityManager => {
+        return await this.dataSource.transaction( async transactionalEntityManager => {
             let addRes =  await transactionalEntityManager.createQueryBuilder()
             .insert().into(tk_article).values(saveData).execute()
             let insertId = addRes.identifiers[0].id
@@ -102,7 +103,7 @@ export class ArticleService {
             
             let removeIds =oldId.filter(itme=>!newId.includes(itme+''))
            
-            return await getManager().transaction( async transactionalEntityManager => {
+            return await this.dataSource.transaction( async transactionalEntityManager => {
                 await transactionalEntityManager.createQueryBuilder()
                 .update(tk_article).set(saveData).where("id =:id",{id:data.id}).execute();
                 //更新关联

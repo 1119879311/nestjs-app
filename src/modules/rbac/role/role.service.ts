@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable, InternalServerErrorException } f
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { tk_role } from '@/entity/tk_role.entity';
-import {  getManager, Repository } from 'typeorm';
+import {  DataSource, Repository } from 'typeorm';
 import { FindRoleListDto, SaveRoleDto, TasksAuthorityDto } from './dto/index.dto';
 
 
@@ -11,6 +11,7 @@ import { FindRoleListDto, SaveRoleDto, TasksAuthorityDto } from './dto/index.dto
 export class RoleService {
     constructor(
         private configService:ConfigService,
+        private dataSource: DataSource,
         @InjectRepository(tk_role) private readonly tkRoleRepository: Repository<tk_role>,
         ){}
     
@@ -116,7 +117,7 @@ export class RoleService {
         let addAuthIds = data.authIds.split(',').filter(itme=>itme)
      
         //第一种事务写法(隐式)
-        return await getManager().transaction( async transactionalEntityManager => {
+        return await this.dataSource.transaction( async transactionalEntityManager => {
             await transactionalEntityManager.createQueryBuilder()
                 .relation(tk_role, 'auths') // 指定載入relation
                 .of(data.id) // 找對應的entity，可以是id或是queryed entity

@@ -50,7 +50,7 @@ export class UserCenterService{
 
         let authInfo:tk_authority[]=[];
         if(res.user_type===1){
-            authInfo = await this.tkAuthRepository.createQueryBuilder("auth").orderBy({"auth.sort":"ASC"}).where(' auth.auth_type=1').getMany()
+            authInfo = await this.tkAuthRepository.createQueryBuilder("auth").orderBy({"auth.sort":"ASC"}).where('auth.status=1 AND auth.auth_type=1').getMany()
         
         }else{
             //存在角色

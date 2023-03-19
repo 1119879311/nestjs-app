@@ -26,6 +26,7 @@ function loadEntity(dirPath="",result = []){
 }
 
 export default registerAs('DbConfig',():DataSourceOptions=>({
+    name: 'default',
     type:"mysql",
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),

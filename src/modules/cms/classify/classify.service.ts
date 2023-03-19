@@ -1,16 +1,17 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { modifyStatusAllDto } from '@/shared/dto/index.dto';
-import { isToEmpty } from '@/shared/util';
-import { tk_classify } from '@/entity/tk_classify.entity';
-import { getManager, Repository } from 'typeorm';
+import { modifyStatusAllDto } from 'src/shared/dto/index.dto';
+import { isToEmpty } from 'src/shared/util';
+import { tk_classify } from 'src/entity/tk_classify.entity';
+import {  Repository,DataSource } from 'typeorm';
 import { FindClassifyListDto, SavaClassifyDto } from './dto/index.dto';
 
 @Injectable()
 export class ClassifyService {
     constructor(
         private configService: ConfigService,
+        private dataSource: DataSource,
         @InjectRepository(tk_classify) private readonly tkClassifyRepository: Repository<tk_classify>,
     ) { }
     async findList(data: FindClassifyListDto) {
@@ -86,7 +87,7 @@ export class ClassifyService {
             throw new BadRequestException("删除失败,数据不存在或者处于正常态无法删除")
         }
         //事务写法(隐式)
-        return await getManager().transaction(async transactionalEntityManager => {
+        return await this.dataSource.transaction(async transactionalEntityManager => {
             await transactionalEntityManager.createQueryBuilder()
                 .delete().from(tk_classify, 'c')
                 .where("id=:id AND status=2", { id: id })
@@ -117,7 +118,7 @@ export class ClassifyService {
         if (isSql) {
             return { sql, data: [id] }
         }
-        let res: any[] = await getManager().query(sql, [id, id])
+        let res: any[] = await this.dataSource.query(sql, [id, id])
         return res.map(itme => itme.id);
     }
     /**
@@ -149,7 +150,7 @@ export class ClassifyService {
         if (isSql) {
             return { sql, data: [value] }
         }
-        let res: any[] = await getManager().query(sql, [value])
+        let res: any[] = await this.dataSource.query(sql, [value])
         res = res.map(itme => itme.id);
         return res.length?res:[''];
     }

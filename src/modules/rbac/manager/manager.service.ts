@@ -6,13 +6,14 @@ import { Aes,  isToEmpty } from '@/shared/util';
 import {  BuildLimit, BuildWhere, BuilSql } from '@/shared/util/dbsql';
 import { tk_role } from '@/entity/tk_role.entity';
 import { tk_user } from '@/entity/tk_user.entity';
-import { getManager, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CreateUserDto,FindUserDto } from './dto/index.dto';
 
 @Injectable()
 export class MannagerService {
     constructor(
         private configService:ConfigService,
+        private dataSource: DataSource,
         @InjectRepository(tk_user) private readonly tkUserRepository: Repository<tk_user>,
         @InjectRepository(tk_role) private readonly tkRoleRepository: Repository<tk_role>
         ){
@@ -77,7 +78,7 @@ export class MannagerService {
         let buildSql = new BuilSql(sql)
         let comSql = buildSql.replaceField('having',buildWhere.getWhereStr()).getSql();
         let resSql = buildSql.replaceField('limit',"?,?").getSql();
-        let res:any[] = await getManager().query(resSql,[loginId,loginId,...buildWhere.getWhereData(),...BuildLimit(page,offset)])
+        let res:any[] = await this.dataSource.query(resSql,[loginId,loginId,...buildWhere.getWhereData(),...BuildLimit(page,offset)])
         
         res =res.map(itme=>{
             if(itme.role_id){
@@ -96,7 +97,7 @@ export class MannagerService {
 
         let countSql = ` select count(*) count from ( ${comSql} ) c`;
         let countBuildSql = new BuilSql(countSql).replaceField('limit').getSql();
-        let resCount = await getManager().query(countBuildSql,[loginId,loginId,...buildWhere.getWhereData()])
+        let resCount = await this.dataSource.query(countBuildSql,[loginId,loginId,...buildWhere.getWhereData()])
 
         return {rows:res,total:resCount[0].count};
         
