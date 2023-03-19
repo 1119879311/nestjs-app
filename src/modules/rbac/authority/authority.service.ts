@@ -3,7 +3,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { oneToTree } from '@/shared/util';
 import { tk_authority } from '@/entity/tk_authority.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { SaveAuthorityDto } from './dto/index.dto';
 
 @Injectable()
@@ -52,7 +52,7 @@ export class AuthorityService {
     * @param id 
     */
     async deleteMenu(id:number){
-        let resFind = await this.tkAuthorityRepository.find({where:[{id:id,auth_type:1},{pid:id,auth_type:1}]})
+        let resFind = await this.tkAuthorityRepository.find({where:[{id:id,auth_type:In([1,3])},{pid:id}]})
         if(resFind.length<1){
             throw new BadRequestException("删除失败，该菜单不存在")
         }

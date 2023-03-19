@@ -26,6 +26,6 @@ export class SaveAuthorityDto{
     @IsOptional()
     sort:number
 
-    @IsIn([1,2])
+    @IsIn([1,2,3])
     auth_type:number
 }
