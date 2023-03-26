@@ -9,7 +9,7 @@ import { ConfigService } from '@nestjs/config';
 
 @Module({
     imports:[
-        forwardRef(()=>UserModule), //forwaredRef() 解决循环依赖问题
+        // forwardRef(()=>UserModule), //forwaredRef() 解决循环依赖问题
         PassportModule.register({ defaultStrategy: 'jwt' }),
 
 

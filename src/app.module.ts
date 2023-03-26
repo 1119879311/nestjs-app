@@ -13,9 +13,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UploadModule } from './modules/upload/upload.module';
 import { MessageModule } from './modules/message/message.module';
 import { LoggerModule } from './shared/logger/logger.module';
+import { TenantModule } from './modules/tenant/tenant.module';
 @Module({
     imports: [
-        CmsModule, RbacModule, AuthModule, UserModule, UploadModule,MessageModule, //业务模块
+        CmsModule, RbacModule, AuthModule, UserModule, UploadModule,MessageModule,TenantModule, //业务模块
         LoggerModule,//日志模块
         // CacheModule.register(), //缓存模块
         ConfigModule.forRoot({ //配置模块

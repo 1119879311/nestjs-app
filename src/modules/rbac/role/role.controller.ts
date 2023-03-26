@@ -18,8 +18,7 @@ export class RoleController {
         return await this.roleService.findList(query)
     }
 
-    @Post("save")
-    @Permissions("per-saveRole")
+    @Post()
     async save(@Body() data:SaveRoleDto){
         if(data.id){
             return await this.roleService.update(data)

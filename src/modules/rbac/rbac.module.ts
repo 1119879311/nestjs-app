@@ -16,6 +16,6 @@ export class RbacModule implements NestModule{
     configure(consumer: MiddlewareConsumer) {
         consumer
         .apply(IsSystemMiddleware)
-        .forRoutes(ManagerController,RoleController,AuthorityController);
+        .forRoutes(AuthorityController);
     }
 }

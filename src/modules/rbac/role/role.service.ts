@@ -46,20 +46,21 @@ export class RoleService {
             throw new HttpException('角色名称已经存在', HttpStatus.BAD_REQUEST)
         }
         
-        let saveRole =new tk_role()
-        saveRole.name = data.name
-        saveRole.desc = data.desc
-        saveRole.status = data.status
-        saveRole.role_type = data.role_type
-        saveRole.sort = saveRole.sort 
-        saveRole.pid=1
-        try {
-            let res =  await this.tkRoleRepository.createQueryBuilder("r")
-            .insert().into(tk_role).values(saveRole).execute()
-            return res.identifiers[0].id;
-        } catch (error) {
-            throw new InternalServerErrorException("创建失败") 
-        }
+        return await this.tkRoleRepository.save(data)
+        // let saveRole =new tk_role()
+        // saveRole.name = data.name
+        // saveRole.desc = data.desc
+        // saveRole.status = data.status
+        // saveRole.role_type = data.role_type
+        // saveRole.sort = saveRole.sort 
+        // // saveRole.pid=1
+        // try {
+        //     let res =  await this.tkRoleRepository.createQueryBuilder("r")
+        //     .insert().into(tk_role).values(saveRole).execute()
+        //     return res.identifiers[0].id;
+        // } catch (error) {
+        //     throw new InternalServerErrorException("创建失败") 
+        // }
     }
 
     async update(data:SaveRoleDto){

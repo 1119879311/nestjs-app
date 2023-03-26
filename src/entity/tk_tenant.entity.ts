@@ -1,7 +1,7 @@
 
-import { Column, Entity  } from "typeorm";
+import { Column, Entity, ManyToMany  } from "typeorm";
 import { tk_common } from "./tk_common";
-
+import {tk_user} from "./tk_user.entity"
 
 /**
  * 实体
@@ -9,13 +9,16 @@ import { tk_common } from "./tk_common";
 @Entity("tk_tenant")
 export class tk_tenant extends tk_common{
    
-    @Column({unique:true,comment:'租户名称',nullable:true})  // 唯一
+    @Column({unique:true,comment:'租户名称'})  // 唯一
     name:string
 
-    @Column({type:'int',unique:false,default:3,comment:'租户数据共存方式：1、公开,2、租户内共享,3、用户私有化'})
+    @Column({type:'int',default:1,comment:'租户数据共存方式：1、用户私有化 ,2、租户内共享,3、公开',})
     data_access:number
 
-    @Column({type:'int',default:0,unique:false,comment:'排序'})
-    sort:number
+    @Column({comment:'租户描述',nullable:true})  
+    desc:string
+
+    @ManyToMany(type => tk_user, user => user.tenants)
+    users: tk_user[];
 
 }

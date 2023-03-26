@@ -1,10 +1,9 @@
 import { Column, CreateDateColumn, Entity,  PrimaryGeneratedColumn } from "typeorm";
+import { tk_common } from "./tk_common";
 
 @Entity("tk_message")
-export class tk_message{
-    @PrimaryGeneratedColumn({comment:'id'})
-    id:number
-
+export class tk_message extends tk_common{
+  
     @Column({comment:'邮箱'})
     email:string
 
@@ -22,10 +21,5 @@ export class tk_message{
 
     @Column({comment:'公司/组织',nullable:true})
     company:string
-
-   
-
-    @CreateDateColumn({comment:'创建时间'})
-    createtime:string
 
 }

@@ -1,4 +1,4 @@
-import {  IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Length, MinLength} from "class-validator"
+import {  IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPhoneNumber, IsString, Length, MinLength} from "class-validator"
 export  class CreateUserDto{
 
     @IsNumber()
@@ -17,11 +17,13 @@ export  class CreateUserDto{
     @IsOptional()
     email: string;
 
-    // @IsRegExp({pattern:/^1\d{10}/},{message:"号码格式不正确"})
+
+    @IsPhoneNumber()
     @IsOptional()
     contact:string
 
     @IsNumber()
+    @IsIn([1,2,3,4],{message:"用户类型参数有误,值为 1, 2,3,4 其一"})
     @IsOptional()
     user_type:number
 
@@ -33,6 +35,9 @@ export  class CreateUserDto{
     @IsOptional()
     roleIds:string
 
-    pid:number
+    @IsString()
+    @IsOptional()
+    tenantIds:string
+
 }
 

@@ -1,7 +1,9 @@
 
 // 加密解密
 import * as crypto from "crypto";
+
 const AES_SECRET_KEY='AES_SECRET_KEY';
+
 
 export function signRonder(n = 30){ //取随机数
     var str = "123456789aAbBcCdDeEfFgGhHiIjJkKlLmMoOpPqQurRsStTuUvVwWxXyYzZ_-";
@@ -30,8 +32,8 @@ export const Aes = {
         try {
             data = typeof data!=="string"?data.toString():data;
             dataKey = typeof dataKey!=="string"?dataKey.toString():dataKey;
-            let algorithm = 'aes-192-cbc';
-            let key = crypto.scryptSync(dataKey, AES_SECRET_KEY, 24);
+            let algorithm = 'aes-256-ctr';
+            let key = crypto.scryptSync(dataKey, AES_SECRET_KEY, 32);
             let iv = crypto.randomBytes(16);
             const cipher = crypto.createCipheriv(algorithm,key,iv);
             let encrypted = cipher.update(data, 'utf8', 'hex');
@@ -51,10 +53,10 @@ export const Aes = {
     decrypt:function(afterData:string,dataKey:string|number){
         try {
             dataKey = typeof dataKey!="string"?dataKey.toString():dataKey;
-            let algorithm = 'aes-192-cbc';
+            let algorithm = 'aes-256-ctr';
             let [value,iv] = afterData.split('.');
             let ivBuffer = Buffer.from(iv,'hex');
-            let key = crypto.scryptSync(dataKey, AES_SECRET_KEY, 24);
+            let key = crypto.scryptSync(dataKey, AES_SECRET_KEY, 32);
             const decipher = crypto.createDecipheriv(algorithm, key, ivBuffer);
             let decrypted = decipher.update(value, 'hex', 'utf8');
             decrypted += decipher.final('utf8');
@@ -219,6 +221,10 @@ export function getFileType(mimetype){
 export function getClientIp(req){
     return req.headers['x-forwarded-for'] || req.headers['x-real-ip']||req.ip
 }
+
+
+
+
 
 
 

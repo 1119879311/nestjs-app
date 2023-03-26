@@ -68,7 +68,7 @@ export class UserCenterService{
         let menu:tk_authority[] = authInfo.filter(itme=>itme.auth_type===1)
         let auth={}
         for(let i=0;i<authInfo.length;i++){
-            auth[authInfo[i].signName] = authInfo[i].title
+            auth[authInfo[i].sign_name] = authInfo[i].title
         }
         res['menu'] =oneToTree<tk_authority>(menu);
         res['auth'] =auth;
@@ -78,9 +78,9 @@ export class UserCenterService{
     /**
      * 验证当前操作是否有权限
      * @param userId 
-     * @param authId 
+     * @param authName 
      */
-    async verfiyAutorify(userId:number,authId:string){
+    async verfiyAutorify(userId:number,authName:string){
         let res = await this.tkUserRepository
         .createQueryBuilder('u')
         .leftJoinAndSelect('u.roles','r',"r.status = :status", { status: 1 })
@@ -95,17 +95,17 @@ export class UserCenterService{
         if(res.user_type!==1&&res.status!==1){
             throw new BadRequestException('用户已经被禁用')
         }
+        // 查角色
         let roleIds = res.roles.map(itme=>itme.id)
         if(roleIds.length<1){
             throw new ForbiddenException('无权访问')
         }
+        // 查权限
         let authRes = await this.tkAuthRepository.createQueryBuilder("auth")
         .leftJoin('auth.roles','r')
-        .where("auth.status=:status AND r.id IN (:roleIds) AND signName=:authId",{status:1,roleIds:roleIds,authId:authId})
+        .where("auth.status=:status AND r.id IN (:roleIds) AND sign_name=:authName",{status:1,roleIds:roleIds,authName:authName})
         .getOne()
-        if(authRes){
-            return true
-        }
+        if(authRes) return true
         throw new ForbiddenException("无权访问");
 
     }

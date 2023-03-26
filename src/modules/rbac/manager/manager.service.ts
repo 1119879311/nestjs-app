@@ -6,8 +6,9 @@ import { Aes,  isToEmpty } from '@/shared/util';
 import {  BuildLimit, BuildWhere, BuilSql } from '@/shared/util/dbsql';
 import { tk_role } from '@/entity/tk_role.entity';
 import { tk_user } from '@/entity/tk_user.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { CreateUserDto,FindUserDto } from './dto/index.dto';
+import { tk_tenant } from '@/entity/tk_tenant.entity';
 
 @Injectable()
 export class MannagerService {
@@ -15,7 +16,9 @@ export class MannagerService {
         private configService:ConfigService,
         private dataSource: DataSource,
         @InjectRepository(tk_user) private readonly tkUserRepository: Repository<tk_user>,
-        @InjectRepository(tk_role) private readonly tkRoleRepository: Repository<tk_role>
+        @InjectRepository(tk_role) private readonly tkRoleRepository: Repository<tk_role>,
+        @InjectRepository(tk_tenant) private readonly tkTenantRepository: Repository<tk_tenant>
+
         ){
             
         }
@@ -107,13 +110,23 @@ export class MannagerService {
      * @param data CreateUserDto
      */
     async createUser(data:CreateUserDto,loginUser?:tk_user){
-        if(loginUser.user_type!==1&&data.user_type===1){
+        // 用户类型 use_type 值最小，类型级别越高
+       
+        // if(loginUser.user_type!==1 && data.user_type===1 || loginUser.user_type>data.user_type){//
+        //     throw new BadRequestException("你无法创建该类型的用户")
+        // }
+        
+        // if(!data.password){
+        //     throw new HttpException('密码不能为空', HttpStatus.BAD_REQUEST)
+        // }
+        // let resFind = await this.tkUserRepository.createQueryBuilder("u").select(['u.name']).where("u.name = :name",{name:data.name}).getOne();
+        // if(resFind){
+        //     throw new HttpException('账号已经存在', HttpStatus.BAD_REQUEST)
+        // }
+        if(loginUser.user_type>data.user_type){
             throw new BadRequestException("你无法创建该类型的用户")
         }
-        if(!data.password){
-            throw new HttpException('密码不能为空', HttpStatus.BAD_REQUEST)
-        }
-        let resFind = await this.tkUserRepository.createQueryBuilder("u").select(['u.name']).where("u.name = :name",{name:data.name}).getOne();
+        let resFind = await this.tkUserRepository.findOne({where:{name:data.name}})
         if(resFind){
             throw new HttpException('账号已经存在', HttpStatus.BAD_REQUEST)
         }
@@ -124,12 +137,18 @@ export class MannagerService {
         saveUser.contact = data.contact
         saveUser.status = data.status
         saveUser.user_type = data.user_type
-        saveUser.pid =data.pid;
+        saveUser.operator_user_id =loginUser.operator_user_id;
+        saveUser.operator_tenant_id =loginUser.operator_tenant_id;
         if(data.roleIds){
-            saveUser.roles = await this.tkRoleRepository.findByIds(data.roleIds.split(','))
+            saveUser.roles = await this.tkRoleRepository.find({where:{id:In(data.roleIds.split(","))}})
+        }
+        if(data.tenantIds){
+            const tenantIds = data.tenantIds.split(",")
+            saveUser.current_tenant = Number(tenantIds[0])
+            saveUser.tenants = await this.tkTenantRepository.find({where:{id:In(tenantIds)}})
         }
         let res = await this.tkUserRepository.save([saveUser])
-        return res[0].id
+        return res
        
     }
     //更新

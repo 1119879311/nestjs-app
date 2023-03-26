@@ -26,6 +26,7 @@ export class AuthService{
         return this.jwtService.sign({...payload})
     }
 
+    //进行jwt 验证
     async jwtVerify(token:string){
         return await this.jwtService.verify(token,{secret:this.configService.get('JwtConfig.secret')})
     }

@@ -1,16 +1,16 @@
 import { tk_role } from './tk_role.entity';
 import { Column, CreateDateColumn, Entity, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { tk_common } from './tk_common';
 
 @Entity("tk_authority")
-export class tk_authority{
-    @PrimaryGeneratedColumn({comment:'资源id'})
-    id:number
+export class tk_authority extends tk_common{
+  
 
     @Column({comment:'资源名称'})  // 唯一
     title:string
 
     @Column({unique:true,comment:'资源唯一标记'})  // 唯一
-    signName:string
+    sign_name:string
 
     @Column({comment:'资源地址'})  
     url:string
@@ -21,17 +21,6 @@ export class tk_authority{
     @Column({comment:'上级id'})  
     pid:number
 
-    @Column({type:'int',default:1,unique:false,comment:'资源状态：1是启用，其他是禁用'})
-    status:number
-
-    @Column({type:'int',default:10,unique:false,comment:'排序'})
-    sort:number
-
-    @CreateDateColumn({comment:'创建时间'})
-    createtime:string
-
-    @UpdateDateColumn({ comment: '更新时间' })   //自动生成并自动更新列
-    updatetime: string
 
     @ManyToMany(() => tk_role, role => role.auths, { cascade: true })
     roles: tk_role[];

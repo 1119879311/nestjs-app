@@ -4,6 +4,7 @@ import { MannagerService } from './manager.service';
 import {Permissions} from "src/shared/decorators/permissions.decorators"
 import {  veryfyIdsDto, modifyStatusAllDto } from '@/shared/dto/index.dto';
 
+
 @Controller('manager')
 export class ManagerController {
     constructor(
@@ -25,16 +26,17 @@ export class ManagerController {
      * @param data 保存用户(创建和修改)
      * @param req 
      */
-    @Post("save")
-    @Permissions("per-saveManager")
+    @Post()
     async addUser(@Body() data:CreateUserDto,@Req() req){
         //修改
-        let loginUser = req['user']
+        // saveUser.operator_user_id =loginUser.operator_user_id;
+        // saveUser.operator_tenant_id =loginUser.operator_tenant_id;
+        let loginUser = req['user'] || {}
         if(data.id){
             return await this.mannagerService.updataUser(data,loginUser)
         // 添加
         }else{
-            return await this.mannagerService.createUser({status:1,user_type:3,...data,pid:loginUser.id},loginUser)
+            return await this.mannagerService.createUser(data,loginUser)
         } 
     }
     //修改状态
