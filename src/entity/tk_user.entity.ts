@@ -17,6 +17,9 @@ export class tk_user extends tk_common{
     @Column({comment:"用户密码",select:false}) //select 查询的时候隐藏该字段
     password:string
 
+    @Column({comment:"用户key",select:false,default:null})
+    user_key: string;
+
     @Column({type:'int',default:3,comment:'用户类型：1超级用户,2系统用户,3.普通用户,4.游客、测试用户'})
     user_type:number
 

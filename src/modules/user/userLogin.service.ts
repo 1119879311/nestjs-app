@@ -1,50 +1,53 @@
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './../auth/auth.service';
-import { BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, CACHE_MANAGER, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import * as svgCaptcha from "svg-captcha"
-import { Aes, TimeTranform } from '@/shared/util';
+import { Aes, MD5, TimeTranform } from '@/shared/util';
 import { userLoginDto } from './dto/userLogin.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { tk_user } from '@/entity/tk_user.entity';
-
+import {Cache} from "cache-manager"
 @Injectable()
 export class UserLoginService{
     constructor(
         private configService:ConfigService,
         private authService:AuthService,
-        @InjectRepository(tk_user) private readonly tkUserRepository: Repository<tk_user>
+       
+        @InjectRepository(tk_user) private readonly tkUserRepository: Repository<tk_user>,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
+        
     ){}
 
     async login(data:userLoginDto){
         // 先验证验证码
         
-        if(!this.verifyCode(data.codetoken,data.code)){
-            throw new BadRequestException('图形认证码失败')
-        }
+        // if(!this.verifyCode(data.codetoken,data.code)){
+        //     throw new BadRequestException('图形认证码失败')
+        // }
         //验证密码
         // let userInfo =  await this.tkUserRepository.findOne({where:{name:data.username} })
-        let userInfo = await this.tkUserRepository.createQueryBuilder('u').where('u.name=:username',{username:data.username}).addSelect('u.password').getOne();
+        let userInfo = await this.tkUserRepository.createQueryBuilder('u').where('u.name=:username',{username:data.username}).addSelect(['u.password','u.user_key']).getOne();
         // 账号不存在
         if(!userInfo) throw new HttpException('账号不存在', HttpStatus.BAD_REQUEST)
 
+        // 不是超级用户，状态不为1的为禁用状态
+        if(userInfo.user_type!=1&&userInfo.status!=1)  {
+            throw new HttpException('该账号已被禁用，请联系管理员', HttpStatus.FORBIDDEN)
+        }
         // 密码错误
         
-        let aesPassword = Aes.decrypt(userInfo.password,this.configService.get('password_secret'))
-      
-        if(!aesPassword||aesPassword!=data.password){
+        let aesPassword = MD5(data.password,userInfo.user_key)
+        if(!aesPassword||aesPassword!==userInfo.password){
             throw new HttpException('密码错误', HttpStatus.BAD_REQUEST)
         }
         
-
-        // 不是超级用户，状态不为1的为禁用状态
-        if(userInfo.user_type!=1&&userInfo.status!=1)  {
-            throw new HttpException('该账号已被禁用，请切换账号登录', HttpStatus.FORBIDDEN)
-        }
         //生成token
-        let resData = {...userInfo,password:''}
-        let token = await this.authService.loginSign(resData);
-        return {...resData,token}
+        let {password,user_key,createtime,updatetime,...addUser} = userInfo;
+        let token = await this.authService.loginSign({...addUser,user_key});
+        let chacheKey = `user_info_${userInfo.id}`
+        await this.cacheManager.set(chacheKey,addUser,60*60)
+        return {...addUser,token}
     }
     /**
      * 生成验证码

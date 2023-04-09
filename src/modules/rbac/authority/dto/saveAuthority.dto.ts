@@ -7,15 +7,20 @@ export class SaveAuthorityDto{
     id:number
 
     @IsString()
-    title:string
+    @IsNotEmpty()
+    name:string
 
     @IsString()
-    signName:string
-
     @IsNotEmpty()
+    code:string
+
+    // @IsNotEmpty()
+    @IsOptional()
+    @IsString()
     url:string
 
     @IsNumber()
+    @IsOptional()
     pid:number
 
     @IsNumber()

@@ -3,6 +3,7 @@ import {CreateUserDto,FindUserDto} from './dto/index.dto';
 import { MannagerService } from './manager.service';
 import {Permissions} from "src/shared/decorators/permissions.decorators"
 import {  veryfyIdsDto, modifyStatusAllDto } from '@/shared/dto/index.dto';
+import { Auth } from '@/shared/decorators/authorization.decorator';
 
 
 @Controller('manager')
@@ -11,14 +12,21 @@ export class ManagerController {
         private mannagerService:MannagerService
     ){}
 
+    /**
+     *  超级用户可以查所有数据
+     *  其他用户根据所属空间 类型查,
+     * @param query 
+     * @param req 
+     * @returns 
+     */
     @Get()
-    @Permissions("per-lookManager")
+    @Auth("per-lookManager")
     async find(@Query() query:FindUserDto,@Req() req){
-        let {id,user_type} = req['user']
-        if(user_type===1||user_type===2){
+        let {id,user_type,current_tenant} = req['user']
+        if(user_type===1){
             return await this.mannagerService.find(query)
         }
-        return await this.mannagerService.findChildUser(id,query)
+        return await this.mannagerService.findChildUser(id,current_tenant,query) 
        
     }
     /**

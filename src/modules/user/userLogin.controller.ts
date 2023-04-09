@@ -16,7 +16,6 @@ export class UserLoginController{
      */
     
     @Post("login")
-    @NoAuth("ALL")
     async login(@Body() userData:userLoginDto){
         let res = await this.userLoginService.login(userData)
         return res;
@@ -28,7 +27,6 @@ export class UserLoginController{
      * 获取图片验证码
      */
     @Get("code")
-    @NoAuth("ALL")
     async code(@Res() res:Response){
         let {codeSvg,codeToken} = await this.userLoginService.code()
         res.append("codeToken",codeToken)

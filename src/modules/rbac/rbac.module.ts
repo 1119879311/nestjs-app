@@ -14,8 +14,8 @@ import { AuthorityController } from './authority/authority.controller';
 })
 export class RbacModule implements NestModule{
     configure(consumer: MiddlewareConsumer) {
-        consumer
-        .apply(IsSystemMiddleware)
-        .forRoutes(AuthorityController);
+        // consumer
+        // .apply()
+        // .forRoutes();
     }
 }

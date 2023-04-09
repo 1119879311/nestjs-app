@@ -3,6 +3,7 @@ import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthorityService } from './authority.service';
 import { SaveAuthorityDto } from './dto/index.dto';
 import {Permissions} from "src/shared/decorators/permissions.decorators"
+import { Auth } from '@/shared/decorators/authorization.decorator';
 @Controller('authority')
 export class AuthorityController {
     constructor(
@@ -16,7 +17,7 @@ export class AuthorityController {
     }
 
     @Post("save")
-    @Permissions("per-saveAuthority")
+    @Auth("per-saveAuthority")
     async save(@Body() data:SaveAuthorityDto){
         return this.authorityService.save(data)
     }

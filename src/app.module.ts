@@ -1,6 +1,6 @@
 import { RoleGuard } from './shared/guards/role.guard';
 import { JwtAuthGuard } from './shared/guards/auth.guard';
-import {   MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import {   CacheInterceptor, CacheModule, CACHE_MANAGER, MiddlewareConsumer, Module, NestModule, Global } from '@nestjs/common';
 import { CmsModule } from './modules/cms/cms.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { LoggerMiddleware } from './shared/middleware/logger.middleware';
@@ -14,11 +14,14 @@ import { UploadModule } from './modules/upload/upload.module';
 import { MessageModule } from './modules/message/message.module';
 import { LoggerModule } from './shared/logger/logger.module';
 import { TenantModule } from './modules/tenant/tenant.module';
+
+
 @Module({
     imports: [
         CmsModule, RbacModule, AuthModule, UserModule, UploadModule,MessageModule,TenantModule, //业务模块
         LoggerModule,//日志模块
-        // CacheModule.register(), //缓存模块
+       
+        CacheModule.register({isGlobal:true,ttl:60*60*12}),
         ConfigModule.forRoot({ //配置模块
             load: AppConfig,
             isGlobal: true,
@@ -39,10 +42,6 @@ import { TenantModule } from './modules/tenant/tenant.module';
             provide: APP_GUARD,
             useClass: RoleGuard
         },
-        // {
-        //     provide: APP_INTERCEPTOR,
-        //     useClass: CacheInterceptor,
-        // },
     ]
 })
 export class AppModule implements NestModule {

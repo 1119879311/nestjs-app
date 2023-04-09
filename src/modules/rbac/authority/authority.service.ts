@@ -23,8 +23,8 @@ export class AuthorityService {
     */
     async save(data:SaveAuthorityDto){
         let saveData = new tk_authority()
-        saveData.title=data.title
-        saveData.sign_name = data.signName
+        saveData.name=data.name
+        saveData.code = data.code
         saveData.url = data.url
         saveData.auth_type=data.auth_type
         saveData.pid =data.pid

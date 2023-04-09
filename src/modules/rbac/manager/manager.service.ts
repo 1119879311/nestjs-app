@@ -2,7 +2,7 @@ import { BadRequestException, HttpException, HttpStatus, Injectable, InternalSer
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { modifyStatusAllDto } from '@/shared/dto/modifyStatus.dto';
-import { Aes,  isToEmpty } from '@/shared/util';
+import { Aes,  MD5,  isToEmpty, nanoid } from '@/shared/util';
 import {  BuildLimit, BuildWhere, BuilSql } from '@/shared/util/dbsql';
 import { tk_role } from '@/entity/tk_role.entity';
 import { tk_user } from '@/entity/tk_user.entity';
@@ -43,7 +43,7 @@ export class MannagerService {
         let resBuilder = await this.tkUserRepository
         .createQueryBuilder('u')
         .leftJoinAndSelect('u.roles','roles')
-        .leftJoinAndMapOne('u.parent',tk_user, 'parent', 'u.pid=parent.id')
+        .leftJoinAndMapOne('u.parent',tk_user, 'parent', 'u.operator_user_id=parent.id')
         .select(['u','parent.id','parent.name','parent.status','roles.name','roles.id','roles.role_type','roles.status'])
         .skip(page*offset)
         .take(offset)
@@ -58,7 +58,7 @@ export class MannagerService {
 
         return {rows:res[0],total:res[1]};
     }
-    async findChildUser(loginId:number,data:FindUserDto){
+    async findChildUser(loginId:number,current_tenant:number,data:FindUserDto){
 
         let page =(data.page||this.configService.get("page"))-1;
         let offset =data.offset|| this.configService.get("offset");
@@ -71,12 +71,12 @@ export class MannagerService {
 
         let sql =`SELECT 
             u.*,up.name as pname,up.status pstatus,GROUP_CONCAT(ur.r_id) as role_id,GROUP_CONCAT(r.name) as role_name ,GROUP_CONCAT(r.status) as role_status
-            FROM ( SELECT * FROM tk_user  ORDER BY pid, id DESC ) u
+            FROM ( SELECT * FROM tk_user  ORDER BY operator_user_id, id DESC ) u
             left join tk_user_role ur on ur.u_id=id 
             left join tk_role r on r.id=ur.r_id
-            left join tk_user up on u.pid=up.id, 
+            left join tk_user up on u.operator_user_id=up.id, 
             (SELECT @pv :=?) initialisation
-            WHERE (FIND_IN_SET(u.pid,@pv)>0 And @pv := concat(@pv, ',', u.id)) or u.id=?
+            WHERE (FIND_IN_SET(u.operator_user_id,@pv)>0 And @pv := concat(@pv, ',', u.id)) or u.id=?
             group by u.id :having :limit`
         let buildSql = new BuilSql(sql)
         let comSql = buildSql.replaceField('having',buildWhere.getWhereStr()).getSql();
@@ -92,7 +92,7 @@ export class MannagerService {
             }else{
                 itme.roles = [];
             }
-            itme.parent = itme.pname?{id:itme.pid,name:itme.pname,status:itme.pstatus}:null;
+            itme.parent = itme.pname?{id:itme.operator_user_id,name:itme.pname,status:itme.pstatus}:null;
             itme.password='';
             return itme
             
@@ -132,7 +132,8 @@ export class MannagerService {
         }
         let saveUser = new tk_user()
         saveUser.name = data.name;
-        saveUser.password = Aes.encryption(data.password,this.configService.get('password_secret'))
+        saveUser.user_key = nanoid()
+        saveUser.password =  MD5(data.password, saveUser.user_key)// Aes.encryption(data.password,this.configService.get('password_secret'))
         saveUser.email = data.email
         saveUser.contact = data.contact
         saveUser.status = data.status

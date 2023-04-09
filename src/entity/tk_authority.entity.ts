@@ -7,18 +7,18 @@ export class tk_authority extends tk_common{
   
 
     @Column({comment:'资源名称'})  // 唯一
-    title:string
+    name:string
 
     @Column({unique:true,comment:'资源唯一标记'})  // 唯一
-    sign_name:string
+    code:string
 
-    @Column({comment:'资源地址'})  
+    @Column({comment:'资源地址',nullable:true,})  
     url:string
 
     @Column({type:'int',unique:false,comment:'资源类型：1是菜单(与前端关联),2是api接口(与后端关联),3页面路由'})
     auth_type:number
 
-    @Column({comment:'上级id'})  
+    @Column({comment:'上级id',default:0,nullable:true})  
     pid:number
 
 

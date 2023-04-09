@@ -3,7 +3,8 @@
 import * as crypto from "crypto";
 
 const AES_SECRET_KEY='AES_SECRET_KEY';
-
+import {nanoid} from "./nanoid"
+export {nanoid}
 
 export function signRonder(n = 30){ //取随机数
     var str = "123456789aAbBcCdDeEfFgGhHiIjJkKlLmMoOpPqQurRsStTuUvVwWxXyYzZ_-";
@@ -16,13 +17,12 @@ export function signRonder(n = 30){ //取随机数
     return ronderstr
 }
 
-export const MD5 =(data:string)=>{
-    let dataKey = data.split('').reverse().join('');
-    let hash = crypto.createHash("sha256")
-    hash.update(data+'-'+dataKey);
+export const MD5 =(data:string,key?:string)=>{
+    let dataKey = key || data.split('').reverse().join('');
+    let hash = crypto.createHmac("sha256",dataKey)
+    hash.update(data);
     return hash.digest("hex");
 }
-
 export const Aes = {
     /**加密
      * 
@@ -221,6 +221,7 @@ export function getFileType(mimetype){
 export function getClientIp(req){
     return req.headers['x-forwarded-for'] || req.headers['x-real-ip']||req.ip
 }
+
 
 
 
