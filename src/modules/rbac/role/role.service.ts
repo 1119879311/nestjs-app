@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { tk_role } from '@/entity/tk_role.entity';
 import {  DataSource, Repository } from 'typeorm';
-import { FindRoleListDto, SaveRoleDto, TasksAuthorityDto } from './dto/index.dto';
+import { FindRoleListDto, SaveRoleDto, TasksAuthorityDto } from './role.dto';
 
 
 @Injectable()

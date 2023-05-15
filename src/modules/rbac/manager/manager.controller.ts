@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
-import {CreateUserDto,FindUserDto} from './dto/index.dto';
 import { MannagerService } from './manager.service';
-import {Permissions} from "src/shared/decorators/permissions.decorators"
+// import {Permissions} from "src/shared/decorators/permissions.decorators"
 import {  veryfyIdsDto, modifyStatusAllDto } from '@/shared/dto/index.dto';
 import { Auth } from '@/shared/decorators/authorization.decorator';
+import { CreateUserDto, FindUserDto } from './manager.dto';
 
 
 @Controller('manager')
@@ -41,15 +41,15 @@ export class ManagerController {
         // saveUser.operator_tenant_id =loginUser.operator_tenant_id;
         let loginUser = req['user'] || {}
         if(data.id){
-            return await this.mannagerService.updataUser(data,loginUser)
+            return await this.mannagerService.updata(data,loginUser)
         // 添加
         }else{
-            return await this.mannagerService.createUser(data,loginUser)
+            return await this.mannagerService.create(data,loginUser)
         } 
     }
     //修改状态
     @Post("modifyStatus")
-    @Permissions("per-modifyStatusManager")
+    @Auth("per-modifyStatusManager")
     modifyStatus(@Body() data:modifyStatusAllDto){
         return this.mannagerService.modifyStatusUser(data)
     }
@@ -57,7 +57,7 @@ export class ManagerController {
      * 删除用户
      */
     @Post("delete")
-    @Permissions("per-deleteManager")
+    @Auth("per-deleteManager")
     delete(@Body() data:veryfyIdsDto){
         return this.mannagerService.delete(data.ids)
     }

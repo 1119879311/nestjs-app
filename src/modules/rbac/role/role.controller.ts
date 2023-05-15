@@ -1,8 +1,8 @@
 import { modifyStatusDto, veryfyIdDto } from '@/shared/dto/index.dto';
 import { RoleService } from './role.service';
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { FindRoleListDto, SaveRoleDto, TasksAuthorityDto } from './dto/index.dto';
-import {Permissions} from "src/shared/decorators/permissions.decorators"
+import { FindRoleListDto, SaveRoleDto, TasksAuthorityDto } from './role.dto';
+import { Auth } from '@/shared/decorators/authorization.decorator';
 @Controller('role')
 export class RoleController {
     constructor(
@@ -10,7 +10,7 @@ export class RoleController {
     ){}
 
     @Get()
-    @Permissions("per-lookRole")
+    @Auth("per-lookRole")
     async find(@Query() query:FindRoleListDto){
         if(query.id){
             return await this.roleService.roleDetail(query.id)
@@ -28,20 +28,20 @@ export class RoleController {
     }
 
     @Post("modifyStatus")
-    @Permissions("per-modifyStatusRole")
+    @Auth("per-modifyStatusRole")
     async modifyStatus(@Body() data:modifyStatusDto){
         return await this.roleService.modifyStatus(data)
     }
 
 
     @Post("delete")
-    @Permissions("per-deleteRole")
+    @Auth("per-deleteRole")
     async delete(@Body() data:veryfyIdDto){
         return await this.roleService.delete(data.id)
     }
 
     @Post("tasksAuthority")
-    @Permissions("per-tasksAuthorityRole")
+    @Auth("per-tasksAuthorityRole")
     async tasksAuthority(@Body() data:TasksAuthorityDto){
         return this.roleService.tasksAuthority(data)
     }

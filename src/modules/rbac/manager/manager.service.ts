@@ -7,9 +7,8 @@ import {  BuildLimit, BuildWhere, BuilSql } from '@/shared/util/dbsql';
 import { tk_role } from '@/entity/tk_role.entity';
 import { tk_user } from '@/entity/tk_user.entity';
 import { DataSource, In, Repository } from 'typeorm';
-import { CreateUserDto,FindUserDto } from './dto/index.dto';
+import { CreateUserDto,FindUserDto } from './manager.dto';
 import { tk_tenant } from '@/entity/tk_tenant.entity';
-
 @Injectable()
 export class MannagerService {
     constructor(
@@ -109,20 +108,8 @@ export class MannagerService {
      *  创建用户
      * @param data CreateUserDto
      */
-    async createUser(data:CreateUserDto,loginUser?:tk_user){
+    async create(data:CreateUserDto,loginUser?:tk_user){
         // 用户类型 use_type 值最小，类型级别越高
-       
-        // if(loginUser.user_type!==1 && data.user_type===1 || loginUser.user_type>data.user_type){//
-        //     throw new BadRequestException("你无法创建该类型的用户")
-        // }
-        
-        // if(!data.password){
-        //     throw new HttpException('密码不能为空', HttpStatus.BAD_REQUEST)
-        // }
-        // let resFind = await this.tkUserRepository.createQueryBuilder("u").select(['u.name']).where("u.name = :name",{name:data.name}).getOne();
-        // if(resFind){
-        //     throw new HttpException('账号已经存在', HttpStatus.BAD_REQUEST)
-        // }
         if(loginUser.user_type>data.user_type){
             throw new BadRequestException("你无法创建该类型的用户")
         }
@@ -153,7 +140,7 @@ export class MannagerService {
        
     }
     //更新
-    async updataUser(data:CreateUserDto,loginUser?:tk_user){
+    async updata(data:CreateUserDto,loginUser?:tk_user){
        
         let resFind = await this.tkUserRepository.createQueryBuilder("u").select(['u.name','u.id','u.user_type']).where("u.name = :name OR u.id =:id",{name:data.name,id:data.id}).getMany();
         let redFilter = resFind.filter(itme=>itme.id===data.id)
@@ -173,15 +160,21 @@ export class MannagerService {
         saveUser.contact = data.contact
         saveUser.status=data.status
         saveUser.user_type=data.user_type
-        saveUser.roles = data.roleIds?await this.tkRoleRepository.findByIds(data.roleIds.split(',')):[]
+        saveUser.roles = data.roleIds?await this.tkRoleRepository.findBy({id:In(data.roleIds.split(','))}):[]
         let res = await this.tkUserRepository.save([saveUser])
         return res[0].id
     }
     
+
+    getWhere(loginUser?:tk_user){
+        if(!loginUser || loginUser.user_type===1) return {}
+        if(loginUser.tenants){}
+    }
+
     // 修改状态
     async modifyStatusUser(data:modifyStatusAllDto){
         let res = await this.tkUserRepository.createQueryBuilder("a").update(tk_user)
-            .set({ status: data.status}).where("id in (:id)", { id: data.ids.split(',') }).execute();
+            .set({ status: data.status}).where("id in (:id)", { id: data.ids.split(',') }).andWhere({}).execute();
         if(res.affected>0){
             return res.affected
         }

@@ -1,9 +1,8 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { NoAuth } from '@/shared/decorators/noAuth.decorators';
 import { modifyStatusAllDto, veryfyIdsDto } from '@/shared/dto/index.dto';
-import {  FindImagesListDto, SaveImagesDto } from './dto/index.dto';
+import {  FindImagesListDto, SaveImagesDto } from './images.dto';
 import { ImagesService } from './images.service';
-import {Permissions} from "src/shared/decorators/permissions.decorators"
+import { Auth } from '@/shared/decorators/authorization.decorator';
 @Controller('images')
 export class ImagesController {
     constructor(
@@ -11,7 +10,6 @@ export class ImagesController {
     ){}
     
     @Get()
-    @NoAuth("ALL")
     findAll(@Query() query:FindImagesListDto){
         if(query.id){
             return this.imagesService.findDetail(query.id,query.status)
@@ -20,7 +18,7 @@ export class ImagesController {
     }
 
     @Post("save")
-    @Permissions("per-saveImage")
+    @Auth("per-saveImage")
     async save(@Body() data:SaveImagesDto){ 
         if(data.id){
             return this.imagesService.update(data)
@@ -30,13 +28,13 @@ export class ImagesController {
 
      //修改状态
      @Post("modifyStatus")
-     @Permissions("per-modifyStatusImage")
+     @Auth("per-modifyStatusImage")
      modifyStatus(@Body() data:modifyStatusAllDto){
          return this.imagesService.modifyStatusUser(data)
      }
 
     @Post("delete")
-    @Permissions("per-deleteImage")
+    @Auth("per-deleteImage")
     async delete(@Body() data:veryfyIdsDto){
         return this.imagesService.delete(data.ids)
     }

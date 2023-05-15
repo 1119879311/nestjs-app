@@ -1,8 +1,8 @@
-import { modifypwdDto } from './dto/modifypwd.dto';
 import { Body, Controller,  Post, Query, Req } from "@nestjs/common";
-
 import { UserCenterService } from './userCenter.service';
 import { Auth } from '@/shared/decorators/authorization.decorator';
+import { modifypwdDto } from './user.dto';
+
 @Auth()
 @Controller('managerCenter')
 export class UserCenterController{

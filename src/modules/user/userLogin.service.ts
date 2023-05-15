@@ -3,7 +3,7 @@ import { AuthService } from './../auth/auth.service';
 import { BadRequestException, CACHE_MANAGER, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import * as svgCaptcha from "svg-captcha"
 import { Aes, MD5, TimeTranform } from '@/shared/util';
-import { userLoginDto } from './dto/userLogin.dto';
+import { userLoginDto } from './user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { tk_user } from '@/entity/tk_user.entity';
@@ -44,8 +44,18 @@ export class UserLoginService{
         
         //生成token
         let {password,user_key,createtime,updatetime,...addUser} = userInfo;
-        let token = await this.authService.loginSign({...addUser,user_key});
-        let chacheKey = `user_info_${userInfo.id}`
+        let token = await this.authService.loginSign({id:addUser.id,name:addUser.name,user_key});
+        let chacheKey = `user_base_${userInfo.id}`
+        // "id": 2,
+        // "operator_user_id": 1,
+        // "operator_tenant_id": 1,
+        // "status": 1,
+        // "sort": 0,
+        // "name": "admin",
+        // "user_type": 2,
+        // "contact": null,
+        // "email": null,
+        // "current_tenant": 1,
         await this.cacheManager.set(chacheKey,addUser,60*60)
         return {...addUser,token}
     }

@@ -1,4 +1,4 @@
-import {  IsNumberString, IsOptional, IsString } from "class-validator";
+import {  IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator";
 
 export  class FindTagListDto{
 
@@ -33,4 +33,25 @@ export  class FindTagListDto{
 
     @IsOptional()
     isPage:string|boolean
+}
+
+export class SavaTagDto{
+
+    @IsNumber()
+    @IsOptional()
+    id:number
+
+    @IsString()
+    @IsNotEmpty()
+    name:string
+
+
+    @IsNumber()
+    @IsOptional()
+    status:number
+
+    @IsNumber()
+    @IsOptional()
+    sort:number
+
 }

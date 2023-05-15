@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isToEmpty } from '@/shared/util';
 import { tk_message } from '@/entity/tk_message.entity';
 import { Repository } from 'typeorm';
-import { SavaMessageDto } from './dto/index.dto';
+import { SavaMessageDto } from './message.dto';
 import nodeXlsx from "node-xlsx"
 
 

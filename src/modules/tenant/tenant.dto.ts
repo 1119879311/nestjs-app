@@ -9,3 +9,5 @@ export class CreateTenantDto extends SaveCommonDto{
 
 
 }
+
+export class UpdateTenantDto {}

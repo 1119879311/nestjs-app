@@ -1,9 +1,8 @@
 import { modifyStatusDto, veryfyIdDto } from '@/shared/dto/index.dto';
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthorityService } from './authority.service';
-import { SaveAuthorityDto } from './dto/index.dto';
-import {Permissions} from "src/shared/decorators/permissions.decorators"
 import { Auth } from '@/shared/decorators/authorization.decorator';
+import { SaveAuthorityDto } from './authority.dto';
 @Controller('authority')
 export class AuthorityController {
     constructor(
@@ -11,7 +10,7 @@ export class AuthorityController {
     ){}
 
     @Get()
-    @Permissions("per-lookAuthority")
+    @Auth("per-lookAuthority")
     async find(){
         return this.authorityService.find();
     }
@@ -23,18 +22,18 @@ export class AuthorityController {
     }
 
     @Post("deleteMenu")
-    @Permissions("per-deleteAuthority")
+    @Auth("per-deleteAuthority")
     async deleteMenu(@Body() data:veryfyIdDto){
         return this.authorityService.deleteMenu(data.id);
     }
     @Post("deleteAuth")
-    @Permissions("per-deleteAuthority")
+    @Auth("per-deleteAuthority")
     async deleteAuth(@Body() data:veryfyIdDto){
         return this.authorityService.deleteAuth(data.id,2);
     }
 
     @Post("modifyStatus")
-    @Permissions("per-modifyStatusAuthority")
+    @Auth("per-modifyStatusAuthority")
     async modifyStatus(@Body() data:modifyStatusDto){
         return this.authorityService.modifyStatus(data)
     }

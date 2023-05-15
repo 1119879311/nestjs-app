@@ -7,6 +7,7 @@ import { Aes, oneToTree } from "src/shared/util";
 import { tk_user } from "src/entity/tk_user.entity";
 import { Repository } from "typeorm";
 import {Cache} from "cache-manager"
+import { tk_tenant } from '@/entity/tk_tenant.entity';
 
 
 
@@ -17,6 +18,8 @@ export class UserCenterService{
         private appLogger:AppLogger,
         // private authService:AuthService,
         @InjectRepository(tk_user) private readonly tkUserRepository: Repository<tk_user>,
+        @InjectRepository(tk_tenant) private readonly tkTenantRepository: Repository<tk_tenant>,
+
         // @InjectRepository(tk_role) private readonly tkRoleRepository: Repository<tk_role>,
         @InjectRepository(tk_authority) private readonly tkAuthRepository: Repository<tk_authority>,
         @Inject(CACHE_MANAGER) private cacheManager: Cache,
@@ -42,9 +45,13 @@ export class UserCenterService{
     //     let chache = await this.cacheManager.get(userChacheKey)
     //    console.log("读缓存：",chache)
     //     if(chache) return chache
+
+        let userFields = ['u.id','u.name','u.user_type','u.current_tenant','u.operator_user_id','u.operator_tenant_id','u.status']
         let res = await this.tkUserRepository
         .createQueryBuilder('u')
         .leftJoinAndSelect('u.roles','r',"r.status = :status", { status: 1 })
+        .leftJoinAndMapOne('u.tenant',tk_tenant, 't', 'u.current_tenant=t.id')
+        .select([...userFields,'r.id','r.name','r.status','r.role_type','t.id','t.name','t.status','t.tenant_type','t.data_access'])
         .where("u.id=:id",{id})
         .getOne()
         if(!res){
@@ -66,8 +73,6 @@ export class UserCenterService{
                 .where("auth.status=1 AND r.id in (:id)",{id:roleIds})
                 .orderBy({"auth.sort":"ASC"})
                 .getMany()
-       
-
         }
 
         let menu:tk_authority[] = authInfo.filter(itme=>itme.auth_type===1)

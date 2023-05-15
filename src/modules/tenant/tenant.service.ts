@@ -2,8 +2,7 @@ import { tk_tenant } from '@/entity/tk_tenant.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateTenantDto } from './dto/create-tenant.dto';
-import { UpdateTenantDto } from './dto/update-tenant.dto';
+import { CreateTenantDto ,UpdateTenantDto} from './tenant.dto';
 
 @Injectable()
 export class TenantService {

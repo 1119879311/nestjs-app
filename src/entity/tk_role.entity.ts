@@ -15,7 +15,7 @@ export class tk_role extends tk_common{
     @Column({comment:'角色描述',nullable:true})  
     desc:string
 
-    @Column({comment:'角色类型1:系统预设,2:普通角色',default:1})  //
+    @Column({comment:'角色类型1:系统预设,2:普通角色',default:2})  //
     role_type:number
     
     // @Column({comment:'角色的父级id (所属)',nullable:true})  // 唯一

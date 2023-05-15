@@ -6,14 +6,12 @@ import { isToEmpty } from '@/shared/util';
 import { tk_classify } from '@/entity/tk_classify.entity';
 import { tk_images } from '@/entity/tk_images.entity';
 import { Repository } from 'typeorm';
-import { ClassifyService } from '../classify/classify.service';
-import { SaveImagesDto, FindImagesListDto } from './dto/index.dto';
+import { SaveImagesDto, FindImagesListDto } from './images.dto';
 
 @Injectable()
 export class ImagesService {
     constructor(
         private configService:ConfigService,
-        private classifyService:ClassifyService,
         @InjectRepository(tk_images) private readonly tkImagesRepository: Repository<tk_images>,
     ){}
     

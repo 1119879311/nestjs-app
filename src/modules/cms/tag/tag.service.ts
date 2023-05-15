@@ -5,7 +5,7 @@ import { modifyStatusAllDto } from '@/shared/dto/index.dto';
 import { isToEmpty } from '@/shared/util';
 import { tk_tag } from '@/entity/tk_tag.entity';
 import { Repository } from 'typeorm';
-import { FindTagListDto, SavaTagDto } from './dto/index.dto';
+import { FindTagListDto, SavaTagDto } from './tag.dto';
 
 @Injectable()
 export class TagService {

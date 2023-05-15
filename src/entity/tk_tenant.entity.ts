@@ -15,6 +15,9 @@ export class tk_tenant extends tk_common{
     @Column({type:'int',default:1,comment:'租户数据共存方式：1、用户私有化 ,2、租户内共享,3、公开',})
     data_access:number
 
+    @Column({comment:'租户类型1:系统预设,2:普通租户',default:2})  //
+    tenant_type:number
+
     @Column({comment:'租户描述',nullable:true})  
     desc:string
 

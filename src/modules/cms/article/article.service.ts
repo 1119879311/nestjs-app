@@ -4,7 +4,7 @@ import {  BadRequestException, Injectable, InternalServerErrorException } from '
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { createArticleDto, FindArtilceListDto } from './dto/index.dto';
+import { createArticleDto, FindArtilceListDto } from './article.dto';
 import { isToEmpty } from '@/shared/util';
 import { modifyStatusAllDto } from '@/shared/dto/index.dto';
 import { ClassifyService } from '../classify/classify.service';

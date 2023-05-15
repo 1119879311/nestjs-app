@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { oneToTree } from '@/shared/util';
 import { tk_authority } from '@/entity/tk_authority.entity';
 import { In, Repository } from 'typeorm';
-import { SaveAuthorityDto } from './dto/index.dto';
+import { SaveAuthorityDto } from './authority.dto';
 
 @Injectable()
 export class AuthorityService {
@@ -17,11 +17,16 @@ export class AuthorityService {
         return oneToTree<tk_authority>(res)
     }
 
+    async create(data:SaveAuthorityDto){
+
+
+    }
    /**
     * 
     * @param data 
     */
     async save(data:SaveAuthorityDto){
+        
         let saveData = new tk_authority()
         saveData.name=data.name
         saveData.code = data.code

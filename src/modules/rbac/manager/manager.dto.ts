@@ -1,4 +1,30 @@
-import {  IsEmail, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPhoneNumber, IsString, Length, MinLength} from "class-validator"
+import {  IsEmail, IsIn, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsPhoneNumber, IsString, Length, MinLength} from "class-validator"
+
+export  class FindUserDto{
+    @IsString()
+    @IsOptional()
+    name:string
+    
+    @IsString()
+    @IsOptional()
+    status:number
+
+    @IsString()
+    @IsOptional()
+    startTime:string
+
+    @IsString()
+    @IsOptional()
+    endTime:string
+
+    @IsNumberString()
+    @IsOptional()
+    page:number
+
+    @IsNumberString()
+    @IsOptional()
+    offset:number
+}
 export  class CreateUserDto{
 
     @IsNumber()

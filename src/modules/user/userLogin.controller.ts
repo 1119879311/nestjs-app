@@ -1,10 +1,7 @@
 import { Response } from 'express';
 import { UserLoginService } from './userLogin.service';
 import { Body, Controller, Get, HttpStatus, Param, Post, Query, Res } from "@nestjs/common";
-import { NoAuth } from '@/shared/decorators/noAuth.decorators';
-import { userLoginDto } from './dto/userLogin.dto';
-
-
+import { userLoginDto } from './user.dto';
 
 @Controller()
 export class UserLoginController{
@@ -35,7 +32,6 @@ export class UserLoginController{
     }
 
     @Get("sign/:type/:time/:value")
-    @NoAuth("ALL")
     async jiajiemi(@Param() data){
         return await this.userLoginService.jiajiemi(data)
     }

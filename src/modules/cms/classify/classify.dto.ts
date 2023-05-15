@@ -1,4 +1,4 @@
-import {  IsNumberString, IsOptional, IsString } from "class-validator";
+import {  IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString } from "class-validator"
 
 export  class FindClassifyListDto{
 
@@ -33,4 +33,28 @@ export  class FindClassifyListDto{
     
     @IsOptional()
     isPage:string|boolean
+}
+
+export class SavaClassifyDto{
+
+    @IsNumber()
+    @IsOptional()
+    id:number
+
+    @IsString()
+    @IsNotEmpty()
+    name:string
+
+    @IsNumber()
+    @IsOptional()
+    pid:number
+
+    @IsNumber()
+    @IsOptional()
+    status:number
+
+    @IsNumber()
+    @IsOptional()
+    sort:number
+
 }
