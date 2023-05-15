@@ -3,8 +3,8 @@ import { tk_authority } from '@/entity/tk_authority.entity';
 import { BadRequestException, CACHE_MANAGER, ForbiddenException, Inject, Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Aes, oneToTree } from "src/shared/util";
-import { tk_user } from "src/entity/tk_user.entity";
+import { Aes, MD5, nanoid, oneToTree } from "@/shared/util";
+import { tk_user } from "@/entity/tk_user.entity";
 import { Repository } from "typeorm";
 import {Cache} from "cache-manager"
 import { tk_tenant } from '@/entity/tk_tenant.entity';
@@ -30,10 +30,12 @@ export class UserCenterService{
     
     //修改当前用户密码
     async modifypwd(data:{id:number,password:string}){
-        //加密
-        let aesPassword = Aes.encryption(data.password,this.configService.get('password_secret'))
+        
+        const user_key = nanoid()  // 重新生成user_key
+        const aesPassword =  MD5(data.password, user_key)
+        // let aesPassword = Aes.encryption(data.password,this.configService.get('password_secret'))
         let res = await this.tkUserRepository.createQueryBuilder("u").update(tk_user)
-            .set({ password: aesPassword}).where("id =:id", { id: data.id }).execute();
+            .set({ password:aesPassword,user_key}).where("id =:id", { id: data.id }).execute();
         if(res.affected>0){
             return res.affected
         }
