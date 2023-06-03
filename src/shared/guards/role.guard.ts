@@ -1,4 +1,4 @@
-import { IS_AUTH_KEY } from './../decorators/authorization.decorator';
+import { IS_AUTH_KEY } from '@/shared/decorators/authorization.decorator';
 import { CACHE_MANAGER, CanActivate, ExecutionContext, ForbiddenException, Inject, Injectable } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Observable } from "rxjs";

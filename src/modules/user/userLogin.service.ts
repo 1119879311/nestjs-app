@@ -2,14 +2,17 @@ import { ConfigService } from '@nestjs/config';
 import { AuthService } from './../auth/auth.service';
 import { BadRequestException, CACHE_MANAGER, HttpException, HttpStatus, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import * as svgCaptcha from "svg-captcha"
-import { Aes, MD5, TimeTranform } from '@/shared/util';
+import { Aes, MD5, TimeTranform, omit, pick } from '@/shared/util';
 import { userLoginDto } from './user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { tk_user } from '@/entity/tk_user.entity';
 import {Cache} from "cache-manager"
+import { getCacheUserKey } from '@/shared/constant';
+import { IAppConfig } from '@/config';
 @Injectable()
 export class UserLoginService{
+   
     constructor(
         private configService:ConfigService,
         private authService:AuthService,
@@ -43,21 +46,10 @@ export class UserLoginService{
         }
         
         //生成token
-        let {password,user_key,createtime,updatetime,...addUser} = userInfo;
-        let token = await this.authService.loginSign({id:addUser.id,name:addUser.name,user_key});
-        let chacheKey = `user_base_${userInfo.id}`
-        // "id": 2,
-        // "operator_user_id": 1,
-        // "operator_tenant_id": 1,
-        // "status": 1,
-        // "sort": 0,
-        // "name": "admin",
-        // "user_type": 2,
-        // "contact": null,
-        // "email": null,
-        // "current_tenant": 1,
-        await this.cacheManager.set(chacheKey,addUser,60*60)
-        return {...addUser,token}
+        let {password,user_key,createtime,updatetime,...userData} = userInfo;
+        let token = await this.authService.loginSign({id:userInfo.id,name:userInfo.name,user_type:userInfo.user_type});
+        await this.cacheManager.set(getCacheUserKey(userInfo.id),userData,this.configService.get("cacheUserTime"))
+        return {...userData,token}
     }
     /**
      * 生成验证码
@@ -96,6 +88,11 @@ export class UserLoginService{
         return true
     }
 
+
+
+    updatePassword(data: any) {
+        throw new Error('Method not implemented.');
+      }
 
     jiajiemi(data = {value:'',time:'',type:''}){
         let {value='',time='',type=''} = data

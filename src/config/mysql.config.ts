@@ -2,7 +2,7 @@ import {join,resolve} from 'path';
 import * as fs from "fs"
 import {registerAs} from "@nestjs/config"
 import { DataSourceOptions } from 'typeorm';
-import { CustomOrmLogger } from '@/shared/logger/ormLogger.service';
+// import { CustomOrmLogger } from '@/shared/logger/ormLogger.service';
 function loadEntity(dirPath="",result = []){
     try {
         if( !fs.existsSync(dirPath) || !fs.statSync(dirPath).isDirectory()) return result
@@ -25,7 +25,7 @@ function loadEntity(dirPath="",result = []){
     }
 }
 
-export default registerAs('DbConfig',():DataSourceOptions=>({
+export default ()=>({
     name: 'default',
     type:"mysql",
     host: process.env.DB_HOST,
@@ -42,9 +42,6 @@ export default registerAs('DbConfig',():DataSourceOptions=>({
     logging:['error'] ,
     // logger: new CustomOrmLogger(),
     entities:loadEntity(join(__dirname,'..','entity'))
-    // entities: [
-    //     // entitiesPath
-    //      tk_tag,tk_article
-    // //    'dist/**/*.entity{.ts,.js}'
-    // ],
-}))
+}) as DataSourceOptions
+
+

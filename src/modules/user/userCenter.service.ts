@@ -8,6 +8,7 @@ import { tk_user } from "@/entity/tk_user.entity";
 import { Repository } from "typeorm";
 import {Cache} from "cache-manager"
 import { tk_tenant } from '@/entity/tk_tenant.entity';
+import { getCacheAnthKey } from '@/shared/constant';
 
 
 
@@ -43,21 +44,17 @@ export class UserCenterService{
 
     // 找当前用户的所属角色和权限
     async getManagerRole(id:number){
-        let userChacheKey = `user_info_${id}`
-    //     let chache = await this.cacheManager.get(userChacheKey)
-    //    console.log("读缓存：",chache)
-    //     if(chache) return chache
-
+        
         let userFields = ['u.id','u.name','u.user_type','u.current_tenant','u.operator_user_id','u.operator_tenant_id','u.status']
         let res = await this.tkUserRepository
         .createQueryBuilder('u')
         .leftJoinAndSelect('u.roles','r',"r.status = :status", { status: 1 })
         .leftJoinAndMapOne('u.tenant',tk_tenant, 't', 'u.current_tenant=t.id')
         .select([...userFields,'r.id','r.name','r.status','r.role_type','t.id','t.name','t.status','t.tenant_type','t.data_access'])
-        .where("u.id=:id",{id})
+        .where("u.id=:id and u.status=:status",{id,status:1})
         .getOne()
         if(!res){
-            throw new BadRequestException('用户不存在')
+            throw new BadRequestException('用户不存在或已被禁用')
         }
         if(res.user_type!==1&&res.status!==1){
             throw new BadRequestException('用户已经被禁用')
@@ -84,8 +81,8 @@ export class UserCenterService{
         }
         res['menu'] =oneToTree<tk_authority>(menu);
         res['auth'] =auth;
-        console.log("更新缓存：",res)
-        this.cacheManager.set(userChacheKey,res,1000*60*60)
+      
+        this.cacheManager.set(getCacheAnthKey(id),res,this.configService.get("cacheUserTime"))
         return res;
        
     }
@@ -97,80 +94,21 @@ export class UserCenterService{
     async verfiyAutorify(userId:number,authName:string){
 
         // 先读缓存
-        // 用户信息：四部分： 基本信息： 角色， 权限, 空间
-        /**
-         * 基本信息： id，user_type,name,status,current_tenant
-         * roles:[]
-         * auth:{}
-         */
-        let userChacheKey = `user_info_${userId}`
+        // 用户信息：四部分： 基本信息： 角色， 权限, 分组空间
+       
+        let userChacheKey = getCacheAnthKey(userId)
         let chacheUserInfo:Record<string,any> = await this.cacheManager.get(userChacheKey)
         console.log("读缓存：",chacheUserInfo)
         if( !chacheUserInfo) {
             chacheUserInfo = await this.getManagerRole(userId)
         }
-        //  chacheUserInfo:Record<string,any> = await this.getManagerRole(userId)
+       
         if(chacheUserInfo.user_type===1 || chacheUserInfo.auth[authName]){
             return true;
         }
 
         throw new ForbiddenException("无权访问");
 
-        // let userChacheKey = `user_info_${userId}`
-        //  chacheUserInfo:Record<string,any> = await this.cacheManager.store.get(userChacheKey)
-
-
-
-        console.log("读取缓存：chacheUserInfo",chacheUserInfo)
-        if(!chacheUserInfo){
-            // 缓存数据判定，先判定用户类型，然后角色， 然后权限
-            chacheUserInfo = await this.tkUserRepository
-            .createQueryBuilder('u')
-            .leftJoinAndSelect('u.roles','r',"r.status = :status", { status: 1 })
-            .where("u.id=:id",{id:userId})
-            .getOne()
-        }
-       
-        if(!chacheUserInfo){
-           
-            this.cacheManager.del(userChacheKey);// 用户不存在，直接删除缓存
-            throw new BadRequestException('用户不存在，请联系管理员')
-        }
-        if(chacheUserInfo.user_type===1){
-            return true;
-        }
-        if(chacheUserInfo.user_type!==1&&chacheUserInfo.status!==1){
-            throw new BadRequestException('用户已经被禁用，请联系管理员')
-        }
-        if(chacheUserInfo.roles.length<1){
-            throw new ForbiddenException('无权访问')
-        }
-        // 存在属于缓存数据
-        if(chacheUserInfo.auth && chacheUserInfo.auth[authName]){
-            return true      
-        }
-
-         // 存在缓存 但是 没权限
-        if(chacheUserInfo.auth && chacheUserInfo.auth[authName]===false){
-            throw new ForbiddenException("无权访问");
-        }
-    
-        // 查角色
-        let roleIds = chacheUserInfo.roles.map(itme=>itme.id)
-        // 查权限
-        let authRes = await this.tkAuthRepository.createQueryBuilder("auth")
-        .leftJoin('auth.roles','r')
-        .where("auth.status=:status AND r.id IN (:roleIds) AND code=:authName",{status:1,roleIds:roleIds,authName:authName})
-        .getOne()
-        if(!chacheUserInfo.auth) chacheUserInfo.auth={}
-        chacheUserInfo.auth[authName] =authRes? true :false
-        console.log("更新缓存：chacheUserInfo",chacheUserInfo)
-         this.cacheManager.store.set(userChacheKey,chacheUserInfo,60*60*12)
-        if(authRes) {
-            return true
-        }
-       
-        throw new ForbiddenException("无权访问");
 
     }
   

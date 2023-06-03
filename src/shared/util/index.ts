@@ -223,6 +223,67 @@ export function getClientIp(req){
 }
 
 
+/**
+ * 从对象中取出指定值
+ * @param data 
+ * @param keys 
+ */
+export function pick<T extends Record<string,any>>(data:T, keys:Array<keyof T>){
+ 
+    let result = {} as T;
+    for (let index = 0; index < keys.length; index++) {
+        const key = keys[index];
+        result[key] = data[key] 
+    }
+    return result
+   
+   
+}
+
+/**
+ *  从对象中排除指定项
+ * @param data 
+ * @param keys 
+ * @returns 
+ */
+export function omit<T extends Record<string,any>>(data:T, keys:Array<keyof T>){
+    let result = {} as T;
+    let mapkeys = new Set(keys)
+    for (const key in data) {
+        if(!mapkeys.has(key)){
+            result[key] = data[key]
+        }
+    }
+    return result 
+   
+}
+
+
+/**
+ *  从data 数据中根据路径取值
+ * @param data 
+ * @param pathkey 
+ */
+export function get<T extends any>(data:T,pathkey:string,defaultValue?:any){
+   if(!data) return defaultValue 
+   let pathList = pathkey.split(".");
+   if(!pathList.length) return data || defaultValue
+   let currentValue = data;
+   let len = pathList.length;
+   let start = 0
+   while (len>start) {
+    try {
+        currentValue = currentValue[ pathList[start]]
+        start++
+    } catch (error) {
+        currentValue = defaultValue
+        break
+    }
+   }
+   return currentValue
+}
+
+
 
 
 
