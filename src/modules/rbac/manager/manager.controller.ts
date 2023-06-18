@@ -1,20 +1,20 @@
-import { Body, Controller, Get, Post, Query, Req } from '@nestjs/common';
+import { Body, CACHE_MANAGER, Controller, Get, Inject, Post, Query, Req } from '@nestjs/common';
 import { MannagerService } from './manager.service';
 // import {Permissions} from "src/shared/decorators/permissions.decorators"
 import {  veryfyIdsDto, modifyStatusAllDto } from '@/shared/dto/index.dto';
 import { Auth } from '@/shared/decorators/authorization.decorator';
 import { CreateUserDto, FindUserDto } from './manager.dto';
-
+import { getCacheAnthKey } from '@/shared/constant';
+import {Cache} from "cache-manager"
 
 @Controller('manager')
 export class ManagerController {
     constructor(
-        private mannagerService:MannagerService
+        private mannagerService:MannagerService,
+        @Inject(CACHE_MANAGER) private cacheManager: Cache,
     ){}
 
     /**
-     *  超级用户可以查所有数据
-     *  其他用户根据所属空间 类型查,
      * @param query 
      * @param req 
      * @returns 
@@ -23,6 +23,8 @@ export class ManagerController {
     @Auth("per-lookManager")
     async find(@Query() query:FindUserDto,@Req() req){
         let {id,user_type,current_tenant} = req['user']
+        let chacheUserInfo = await this.cacheManager.get(getCacheAnthKey(id))
+        console.log("chacheUserInfo",chacheUserInfo)
         if(user_type===1){
             return await this.mannagerService.find(query)
         }

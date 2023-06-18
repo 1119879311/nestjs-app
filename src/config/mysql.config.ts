@@ -2,6 +2,7 @@ import {join,resolve} from 'path';
 import * as fs from "fs"
 import {registerAs} from "@nestjs/config"
 import { DataSourceOptions } from 'typeorm';
+import { CustomOrmLogger } from '@/shared/logger/ormLogger.service';
 // import { CustomOrmLogger } from '@/shared/logger/ormLogger.service';
 function loadEntity(dirPath="",result = []){
     try {
